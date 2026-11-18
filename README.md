@@ -50,3 +50,7 @@ python -m pytest -q tests
 The default backend uses NumPy/SciPy. Install `.[performance]` for the optional Numba kernels. The portable tests include energy/force consistency, geometry and boundary checks, CLI input and restart checks. Some historical comparisons need research fixtures external to this release. Historical references in the migrated manuals identify the development records for those claims.
 
 The solver and interfaces were extracted from FFT-Spectral commit `68210916f0be4f15467109286c34d9dcb99de75a`. FFT-ferro starts its public version series at v1.0.
+
+## License
+
+FFT-ferro is licensed under the GNU General Public License, version 2 only (SPDX: `GPL-2.0-only`). See [LICENSE](LICENSE) for the full terms.
