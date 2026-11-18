@@ -1,0 +1,103 @@
+# Example 4: a relaxor-type ferroelectric written as an inline SI material on pf3d at Nz = 1 with plane stress
+# (the construction used for the NBT-6BT work), with a T0 field and an E_ext field.
+#
+# THE NUMBERS ARE ILLUSTRATIVE.  They are the reduced test set of tests/run_entry/test_drive.py (a short, small run),
+# not a validated parameter set.  A production set-up must pass the project's parameter review first.
+# See docs/RUN_INPUT.md section "Worked examples".
+[run]
+name = "inline_si_plane_stress"
+seed = 8
+
+[material]
+temperature_K = 400.0               # the reference temperature the objects are built at
+
+[material.landau_si]                # SI: J m / C^2 per power, alpha_n multiplies P^(2n)
+alpha1 = { slope = 102439.02439024393, T0_K = 446.04392468766434 }   # a1(r) = slope * (T - T0(r)), J m/(C^2 K)
+alpha11 = 44132111.39997179
+alpha12 = 1181247649.6047523
+alpha111 = 1469100596.3540802
+alpha112 = -10013068594.927107
+alpha123 = -39957930751.03719
+alpha1111 = 5105352555.499684
+alpha1112 = 0.0
+alpha1122 = 74787169845.312
+alpha1123 = 165447907602.76056
+
+[material.gradient_si]
+isotropic = 1.707317073170732e-10   # beta, J m^3 / C^2: G11 = beta, G12 = 0, G44 = G44' = beta / 2
+
+[material.elastic]                  # GPa
+C11 = 204.344
+C12 = 110.6672
+C44 = 140.05599999999998
+
+[material.electrostriction]         # m^4 / C^2
+Q11_phys = 0.05056513979773945
+Q12_phys = -0.020820939916716245
+Q44_phys = 0.0880428316478287
+
+[geometry]
+engine = "pf3d"
+N = [32, 32, 1]
+cell_nm = 2.0
+slab_thickness_nm = 6.0             # Lz of the single layer (Dz)
+
+[physics]
+electrostatics = { eps_b = 117.14285714285714 }
+elastic = { k0 = "stress_free", z_mode = "plane_stress" }
+noise = { cutoff_nm = 8.0 }
+
+[numerics]
+dt = 0.2
+L = 0.5857142857142856
+
+[[field]]                           # long-wavelength T0 landscape: T0(r) = T0_K + 40 K * unit Gaussian field
+target = "T0"
+kind = "gaussian"
+sigma_K = 40.0
+correlation_nm = 60.0
+seed = 11
+
+[[field]]                           # nanoscale T0 landscape
+target = "T0"
+kind = "gaussian"
+sigma_K = 20.0
+correlation_nm = 6.0
+seed = 12
+
+[[field]]                           # quenched random field, one seed per Cartesian component
+target = "E_ext"
+kind = "gaussian"
+sigma_kV_cm = 16.8
+correlation_nm = 6.0
+seeds = [13, 14, 15]
+
+[[stage]]
+kind = "cool"
+start = { kind = "white", std = 0.02, seed = 5 }
+rungs = [[400.0, 600], [350.0, 600], [300.0, 600]]
+record_every = 40
+
+[[stage]]
+kind = "hold"
+T_K = 300.0
+n_steps = 600
+record_every = 40
+
+[[stage]]
+kind = "pe_loop"
+T_K = 300.0
+axis = [1, 1, 1]
+E_max_kV_cm = 60.0
+waveform = "triangle"
+cycles = 1
+steps_per_cycle = 2400
+record_every = 40
+
+[measure]
+loop = ["Pmax", "Pr", "Ec"]
+phase_fractions = { P_ref = 0.42475999999999997 }   # scheme "rt": R within 15 deg of <111> and |P| >= 0.7 P_ref
+domain_map = { at = ["cool:end", "pe_loop:E0+"], kind = ["phase"] }
+
+[output]
+dir = "auto"

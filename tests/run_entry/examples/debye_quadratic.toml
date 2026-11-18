@@ -1,0 +1,72 @@
+# E3c anchor model at a size that runs in seconds: a purely quadratic Landau energy (alpha1 = 0.6 deck units, all higher
+# terms 0, no elasticity) is an exact Debye relaxator on the k = 0 mode:
+#   chi_deck(w) = chi0 / (1 - i w tau),  chi0 = 1 / (2 alpha1),  tau = 1 / (2 alpha1 L)   (1 / tau = 1.2 rad per deck time)
+[run]
+name = "debye_quadratic"
+seed = 21
+replicas = 2
+
+[material]
+temperature_K = 298.0
+
+[material.landau]
+alpha1 = 0.6
+alpha11 = 0.0
+alpha12 = 0.0
+alpha111 = 0.0
+alpha112 = 0.0
+alpha123 = 0.0
+
+[material.gradient]
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[material.elastic]
+C11 = 275.0
+C12 = 179.0
+C44 = 54.3
+
+[material.electrostriction]
+Q11_phys = 0.11
+Q12_phys = -0.045
+Q44_phys = 0.029
+
+[geometry]
+engine = "pf2d"
+N = [8, 8]
+cell_nm = 4.0
+slab_thickness_nm = 4.0
+
+[physics]
+electrostatics = { eps_b = 10.0 }
+elastic = { k0 = "off" }
+
+[numerics]
+dt = 0.02
+
+[[stage]]
+kind = "anneal"
+start = "zero"
+stop = { n_steps = 500 }
+
+[[stage]]
+kind = "ac"
+axis = [1, 0, 0]
+E0_kV_cm = 25.0                    # the model is exactly linear: a large amplitude only improves the signal / noise
+omega = [0.3, 1.2, 4.0]
+periods = 6
+discard_periods = 2
+
+[[stage]]
+kind = "fdt"
+n_steps = 8000
+nperseg = 1024
+
+[measure]
+spectrum = { quantities = ["eps_real", "eps_imag"], routes = ["lockin", "fdt"] }
+
+[output]
+dir = "OUT"

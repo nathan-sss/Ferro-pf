@@ -1,0 +1,39 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "deck_parser.load_params_toml"   # path passed by gates/g6a
+source_deck = "runs/rhombo_walls/inputs/k_r109_L64.i"
+extracted = "2026-08-18"
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+alpha1 = -0.0878442
+alpha11 = -1.49175
+alpha12 = 0.323
+alpha111 = 17.94
+alpha112 = 4.47
+alpha123 = 4.91
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[gradient]
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[electrostatics]
+permittivity = 0.08854187
+
+[elastic]
+C11 = 275.0
+C12 = 179.0
+C44 = 54.3
+
+[electrostriction]
+Q11_phys = 0.11
+Q12_phys = -0.045
+Q44_phys = 0.029

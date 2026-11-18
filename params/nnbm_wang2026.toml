@@ -1,0 +1,65 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "grad4.load_nnbm_deck"   # this file is that reader's own default path
+purpose = "SPEC S32 (WP23/W2): Wang et al., Nano Energy 156, 112129 (2026), (1-x)NN-xBM5 NaNbO3-based relaxor -- H11 higher-order-gradient AFE-stripe/slush domain-structure reproduction (SPEC S32.4 checkpoint-1 ruling)."
+sources = "Landau/C/Q: 2026 Nano Energy SI table (reports/LIT_wang2026_nanbo3.md (ii), verbatim, coordinator-spot-checked). Grid/dx/BC: Wang, Zhou et al., Nat. Commun. 16, 2892 (2025) Methods, page-verified (reports/LIT_wang2025_natcomm.md (iii)). Gradient tensor FORM (component-wise, not isotropic): NC 2025 eq.3, page-verified (same note, (i))."
+
+# --- Landau (SOURCED, 2026 SI table, T=180K -- see landau_T_choice below) ---
+landau_source = "2026 SI table: alpha1=(T-230)e5, alpha11=5.60e8, alpha12=2.89e8, alpha111=1.65e9, alpha112=-8.66e8, alpha123=3.19e10 [SI], converted via units.si_to_deck_landau (x1e-9, P unscaled)."
+landau_T_choice = "T=180K (dT=-50K below the table's OWN sign-change T0=230K) is a DIAL, not a physical-Curie-point match: the extraction note (LIT_wang2026_nanbo3.md (ii)) already flags T0=230K as far below the ceramics' MEASURED Curie points (162-390C main text) -- 'a QUALITATIVE/schematic Landau construction (right topology, not a fitted NN-BM5 potential)'. T=180K chosen simply to sit comfortably in this potential's OWN ordered (alpha1<0) regime for the G25c/G25e demo; no claim of matching a real temperature."
+landau_P0_check = "Single-component reduction (alpha1,alpha11,alpha111 only; alpha12/112/123 need a 2nd nonzero component) gives P0=0.06618 deck -- small vs other decks in this repo (~0.5-0.8) because alpha11/alpha111 are large relative to alpha1 in the sourced table; a property of the sourced numbers, not adjusted."
+
+# --- Gradient (SPEC S32.4 R3: first-gradient = single isotropic NEGATIVE dial, via the existing G-menu) ---
+gradient_form = "NC2025 eq.3's alpha1 term is ISOTROPIC (single coefficient, no G11-vs-G44 split): reached here via G12_G110=0, G44_G110=G44P_G110=0.5*G11_G110 -- WP6's own already-validated isotropic reduction (bto_LCC2005_paper.toml: 'the UNIQUE isotropic case... A11=A22=A33=G110*k^2, A12=0'), reused verbatim, not re-derived."
+gradient_dial_basis = "G11 (=G110 here) is a DIAL: NEITHER source paper publishes gradient numerics (LIT_wang2026_nanbo3.md (ii)/(iv), LIT_wang2025_natcomm.md (ii) -- exhaustive grep, zero hits both). Calibrated jointly with H11 below (2 conditions, 2 unknowns): (a) stripe period lambda*=2*pi/sqrt(-G11/(2*H11)) targeted at 51.2nm -- inside the Fig.1a-eyeballed 32-64nm bracket (SPEC S32.4 R3) AND exactly box-commensurate (n=5 allowed mode in this deck's L=256nm box, avoiding any box-quantization ambiguity in G25c); (b) dispersion-minimum depth |Lambda(k*)-Lambda(0)| = H11*k*^4 SET EQUAL to |alpha1| (2*alpha1's own linear-decay scale) -- a documented, non-arbitrary 'order-1 relative to the bulk scale' choice, ensuring the stripe instability is neither negligible vs the local double-well (depth<<|alpha1|) nor totally decoupled from it (depth>>|alpha1|). Solving: H11=|alpha1|/k*^4, G11=-2*H11*k*^2."
+gradient_dial_residual = "Measured stripe wavelength (G25c structure-factor peak) vs this 51.2nm target: recorded in reports/WP23_REPORT.md, not pre-filled here (SPEC S26.0(a): residual reported, not assumed)."
+
+# --- Disorder axis (SPEC S32.4 R4: Wang 2026's E_rand, Gaussian, via E_ext(r)) ---
+disorder_sigma_source = "Wang 2026 SI (LIT_wang2026_nanbo3.md (iii), verbatim): 'the random field effect of the Gaussian distribution ... c represents the standard deviation of the electric field strength distribution, from 0 to 2.18 MV/cm'. SOURCED endpoint; converted V/m->deck via the SAME x1e-9 energy-density-linear factor E_ext already uses elsewhere in this engine (cross-checked: WP21's E_max=0.10 deck <-> 100 MV/m=1e8 V/m, 1e8*1e-9=0.10, exact match)."
+disorder_sigma_max_deck = 0.218
+disorder_xi_erand_nm = 25.6
+disorder_xi_basis = "xi_erand = lambda*/2 (25.6nm): NEITHER paper gives a correlation length ('on these points' is not resolved to continuous-vs-discrete, LIT_wang2026_nanbo3.md (iii)) -- a continuous Gaussian field (solvers.disorder.random_field_gaussian, R3's own machinery) at a scale COMPARABLE to the pattern wavelength is the physically-motivated choice for genuine frustration (SPEC S31's own framing: 'randomly distributed ... regions ... frustrate the polar matrix'); disorder much finer than lambda* would mostly smooth out under the gradient term, much coarser would just add a slow background tilt rather than frustrate the stripe pattern locally. A DIAL, flagged, not sourced."
+xi_noise = "OFF (SPEC S32.4 R4: 'faithful to NC 2025' -- NC2025's own TDGL eq.7 has no stochastic term at all; 2026's xi is named but its amplitude/statistics are never given, LIT_wang2026_nanbo3.md (ii)). Deterministic TDGL (solvers.hog.step, not step_langevin) + a declared SMALL random IC (amplitude ~0.001 deck, ~1.5% of P0=0.06618) -- small enough to let the linear k* instability dominate the early transient before nonlinear saturation, the standard spinodal/pattern-selection setup."
+
+# --- Elastic (SPEC S32.4 R3: OFF, C/Q PARKED for provenance only) ---
+elastic_status = "OFF this pass (elastic_params=None throughout WP23/W2). C11/C12/C44/Q11/Q12/Q44 below are the SOURCED 2026 SI values, parked/unused -- recorded so a later WP can turn electrostriction on without re-sourcing."
+
+# --- Grid/BC/L (SPEC S32.4 R5) ---
+grid_source = "N=128x128, dx=dy=2nm, periodic BC -- NC 2025 Methods, page-verified (LIT_wang2025_natcomm.md (iii), verbatim quote in that note): '128 Delta x x128 Delta y (Delta x and Delta y ... equal to 2nm) with periodic boundary conditions'. Box L=256nm both axes. Set by the case/gate driver (solver.make_grid), not stored as a TOML field -- matches this repo's existing convention (bto_298K.toml etc. carry no [grid] section either)."
+L_mobility = "L=1.0 (this engine's standing convention, every existing deck) -- SPEC S32.4 R3's 'L absorbed into the time unit' is exactly this: no source L exists, dt itself is DIALED via probe_stable_dt + verified_dt (SPEC S27.2(b)/S28.6(a) fixed-total-physical-time check), recorded in reports/WP23_REPORT.md."
+kappa_b_basis = "REUSED fallback KAPPA_B=10*eps0 (deck 0.8854187) -- SAME citation this project has used since WP9/WP15/WP16 (Wang, Ma, Li, Britson & Chen, Acta Mater 61 (2013) 7591, p.7597), NOT re-derived: neither Wang paper gives a background permittivity for the depolarization Poisson solve."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 100 (legacy label said 10)
+#   the [meta].kappa_b_basis prose above is kept VERBATIM as the historical record, but its
+#   arithmetic is 10x off (V2-02.1): "KAPPA_B=10*eps0 (deck 0.8854187)" is 10x a value that is ALREADY 10*eps0, i.e. eps_b = 100; Wang 2013's own number is 10.
+eps_b_true = 100.0
+
+[landau]
+alpha1 = -0.005
+alpha11 = 0.56
+alpha12 = 0.289
+alpha111 = 1.65
+alpha112 = -0.866
+alpha123 = 31.9
+
+[gradient]
+G110 = -0.6640185091
+G11_G110 = 1.0
+G12_G110 = 0.0
+G44_G110 = 0.5
+G44P_G110 = 0.5
+
+[higher_order_gradient]
+H11 = 22.04602902
+
+[electrostatics]
+permittivity = 0.8854187
+
+[elastic]
+C11 = 156.0
+C12 = 96.0
+C44 = 127.0
+
+[electrostriction]
+Q11_phys = 0.048
+Q12_phys = -0.015
+Q44_phys = 0.047

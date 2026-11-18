@@ -1,0 +1,74 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "kittel_afe.load_pbzo_deck"   # this file is that reader's own default path
+source = "Lum, Lim & Chew, J. Phys.: Condens. Matter 34, 415702 (2022), doi:10.1088/1361-648X/ac7e99, Table 1 -- OPEN ACCESS (CC-BY 4.0). PbZrO3-fitted 1D Kittel two-sublattice model: f=(1/2)*alpha*(Pa^2+Pb^2)+(1/4)*beta*(Pa^4+Pb^4)+(1/6)*gamma*(Pa^6+Pb^6)+g*Pa*Pb-E*(Pa+Pb), alpha=g+alpha0*(T-T0). SI Table-1 values: alpha0=5e5 J.m.C^-2.K^-1, beta=-5e8 J.m^5.C^-4, gamma=8e9 J.m^9.C^-6, g=1e8 J.m.C^-2, T0=493K. The paper itself does not cite a further primary source for these 5 numbers (shallow attribution leaf, documented, not re-derived here)."
+T = 298.0
+label = "PbZrO3-flavored, collinear-Kittel-sector anchored (SPEC S23.5(e))"
+note = "EXACT TRANSFORM deck (SPEC S23.5 coordinator ruling, supersedes S23.2's generic-slider fallback). Pa=P+q, Pb=P-q (SPEC S23.1: P=(Pa+Pb)/2, q=(Pa-Pb)/2). Vector extension = DIAGONAL/component-decoupled isotropic embedding (each cubic axis independently reproduces the scalar Kittel transform, sum over axes -- NOT full O(3) rotational embedding, which would instead give t1=beta,t2=2*beta; the diagonal embedding is the one consistent with this ruling's own worked value t1=3*beta<0 and with '(e) all anisotropy slots REQUIRED zero-default', i.e. alpha12=alpha112=alpha123=0 for BOTH P and q sectors). Sympy-verified exact (0 symbolic residual) in gates/g20a's step 0; see WP17_REPORT.md for the full derivation and the independent numeric cross-check: predicted Tc=504.72K vs the paper's own 505K/232C (0.06-0.09% -- <=1%), and forward/backward field thresholds 42.29/28.81 MV/m vs the paper's published 42.4/28.8 MV/m (<=0.3% -- <=2%), BOTH found using the paper's OWN E-coupling convention -E*(Pa+Pb) (kappa=1, confirmed empirically -- NOT -E*(Pa+Pb)/2; see coupling_pq note below for how this maps to the engine's own E_ext convention). alpha1(T)=alpha0*(T-T0)+2*g (P-sector) and aq1(T)=alpha0*(T-T0) (q-sector) are LINEAR IN T -- this frozen file is the T=298.0 snapshot only; solvers/afe.py's pbzo_kittel_landau_si(T) is the generator gates sweep T with."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+# P-sector: alpha1 = alpha0*(T-T0)+2*g, SI then x1e-9 (units.si_to_deck_landau, same factor for every order). alpha12/alpha112/alpha123=0.0 EXACTLY (diagonal embedding), not REQUIRED placeholders.
+alpha1 = 0.1025
+alpha11 = -0.25
+alpha12 = 0.0
+alpha111 = 2.6666666666666665
+alpha112 = 0.0
+alpha123 = 0.0
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[landau_q]
+# q-sector: aq1 = alpha0*(T-T0) (no +2g -- this IS the g-split that makes q order first, see WP17_REPORT.md). aq11=alpha11, aq111=alpha111 EXACTLY (Kittel closure forces the P and q quartic/sextic self-energy to be numerically identical; only the quadratic term differs).
+aq1 = -0.0975
+aq11 = -0.25
+aq12 = 0.0
+aq111 = 2.6666666666666665
+aq112 = 0.0
+aq123 = 0.0
+
+[coupling_pq]
+# f_Pq = t1*sum_i(Pi^2*qi^2) + t2*(P.q)^2 + u1*sum_i(Pi^4*qi^2) + u2*sum_i(Pi^2*qi^4) -- DIAGONAL sum-over-axes form (SPEC S23.5(a)'s "P^2q^2" shorthand resolved this way by the diagonal embedding, sympy-verified 0 residual, gate G20a step 0). LOCKED, not bracketed (S23.5(a)). t1=3*beta<0: the exact transform's quartic P-q coupling is COOPERATIVE (energy-lowering when both order on the same axis), not the generic-menu's t1>0 "mutual suppression" ansatz -- AFE/FE competition in THIS deck lives entirely in aq1<alpha1 (the g-split), not in t1's sign; see WP17_REPORT.md.
+t1 = -1.5
+t2 = 0.0
+u1 = 40.0
+u2 = 40.0
+
+[gradient]
+# Borrowed BTO's G110=1.0 (bto_298K.toml, HM2006) and PZT's own G-ratios (pzt_Haun_x0.6.toml / literature_params.pzt_haun_x, itself BTO-borrowed) as a starting-point placeholder for the P-sector -- SPEC S23.5(d), NOT PbZrO3-validated.
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[gradient_q]
+# g_q = P-sector's own G110 (isotropic, "isotropic first" S23.1) -- SPEC S23.5(d) explicit instruction, same borrow-precedent as [gradient] above. REQUIRED refinement: no PbZrO3-specific gradient coefficient found in the WP17/S1 literature pass (checked Eliseev/Glinchuk/Morozovska arXiv:cond-mat/0608684, stays fully symbolic/dimensionless).
+Gq = 1.0
+
+[electrostatics]
+# Borrowed BTO's permittivity (bto_298K.toml) -- P still sources the normal depolarization field (q does not, SPEC S23.1 binding); not PbZrO3-validated.
+permittivity = 0.08854187
+
+[elastic]
+# Borrowed PZT's Zr-rich end of Table 4's OWN fitted range (x=0.4 -- Table 4 covers x in [0.4,0.9] only, does not reach x=0; literature_params.pzt_haun_x(x=0.4,...)). SPEC S23.5(d): "AFE-specific C (Kagimura & Singh 2008, Phys. Rev. B 77, 104113) = REQUIRED refinement" -- paywalled, not fetched this pass (see WP17_REPORT.md's paywall round).
+C11 = 168.09116809116804
+C12 = 82.62108262108256
+C44 = 40.650406504065046
+
+[electrostriction]
+# P's own electrostriction (elastic.elastic_solve always needs SOME Q11/Q12/Q44 for whatever P field it is given, independent of the NEW f_elq/Lam physics below). Same PZT x=0.4 borrow as [elastic], same caveat.
+Q11_phys = 0.07260173333333333
+# Q12 sign fix (2026-11): Q12_phys is materials.pzt_haun_x_Q(0.4)[1] from the corrected formula (was +0.00030720000000000226 from the sign-flipped transcription). Q11_phys/Q44_phys unchanged.
+Q12_phys = -0.027079200000000005
+Q44_phys = 0.031465733333333336
+
+[eigenstrain_q]
+# f_elq: eps0_ij += Lam_ijkl q_k q_l (SPEC S23.1). Lam11 = Q(PbZrO3) = 2.03e-2 m^4/C^2 (Uchino, Nomura, Cross, Newnham & Jang, J. Mater. Sci. 16, 569 (1981) -- via Karin Rabe's "Antiferroelectricity in oxides: a reexamination" (2012, physics.rutgers.edu/~karin/antiferro.pdf, freely hosted, read directly) restating their fit to PbZrO3's measured field-induced Delta-V/V; ONE ATTRIBUTION LEVEL REMOVED, Uchino et al. 1981 itself not independently verified/fetched (paywalled, Springer). Lam12/Lam44 split: REQUIRED, PZT x=0.4's OWN Q12/Q11 and Q44/Q11 ratios used as a starting-point construction (SPEC S23.5(d) explicitly permits this), NOT independently validated for PbZrO3. Electrostriction-type coefficients carry no SI<->deck conversion (units.py: "dimensionless strain per (C/m^2)^2 ... kept unconverted").
+Lam11 = 0.0203
+# Q12 sign fix (2026-11): Lam12 = Lam11*Q12/Q11 recomputed with the corrected x=0.4 Q12 (was +8.588916256157635e-05). Lam11/Lam44 unchanged (Q44/Q11 is not affected by the fix).
+Lam12 = -0.007571551459744764
+Lam44 = 0.008798528035196572

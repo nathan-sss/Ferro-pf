@@ -1,0 +1,43 @@
+[meta]
+registry_name = "bto_lcc2005_paper"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Li & Chen, Appl. Phys. Lett. 88, 072905 (2006), Ref. 18 footnote (mechanics) + this paper's own Eq 3 (landau, == bto_lcc2005_8th) + Eq 7 (isotropic gradient)"
+T = 298.0
+dx_nm = 0.4
+note = "C11/C12/C44/Q11/Q12/Q44 are the paper's OWN footnote-18 numbers (not Rabe App A -- no 'which Q column' ambiguity, see WP6_REPORT.md). G110 is NOT given by the paper (only G11/G110=1.0 and dx=sqrt(G110/alpha0)); chosen here via dx=0.4nm (documented free parameter, NOT tuned to any result) and backed out through the paper's own formula. G-ratios (0,0.5,0.5) are the unique isotropic case of SPEC's general gradient form, not a free choice. permittivity has no basis in the paper at all; inherited from bto_298K.toml (HM2006) as a documented placeholder."
+kappa_b_ruling = "SPEC WP7b (2026-08-21 coordinator ruling, applied first): paper-reproduction cases (WP7b/WP7c) use kappa_b = 66*eps0 = 66 * this file's own [electrostatics].permittivity (= film3d.KAPPA_B_PAPER_LINEAGE); legacy gates/cases (everything through WP7a, i.e. all of G0-G10) KEEP using this file's [electrostatics].permittivity UNCHANGED (= film3d.KAPPA_B_DECK) -- the field below is deliberately left at the deck value, not overwritten, so legacy gates are unaffected; the 66x factor is applied as a separate module constant, not baked into this TOML. Provenance of 66: APL2006 ref-25 (Li, Hu, Liu, Chen, Appl. Phys. Lett. 81, 427 (2002)) states kappa11=kappa22=kappa33=66.0 (relative permittivity), citing Haun, Furman, Jang, Mckinstry & Cross, J. Appl. Phys. 62, 3331 (1987) (the pto_Haun1987.toml source elsewhere in this project). APL2006's OWN ref-31 (the paper's actual short-circuit-formulation citation) was inaccessible (WP7A_REPORT.md); literature spread for BaTiO3 background/lattice permittivity is documented as roughly 10-66 depending on source and whether ionic/lattice-only or full permittivity is meant -- 66 (the ref-25 lineage value) was chosen by the coordinator as the best-evidenced number reachable from APL2006's own citation chain, not the only value in the literature."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+#   the [meta].kappa_b_ruling prose above is kept VERBATIM as the historical record, but its
+#   arithmetic is 10x off (V2-02.1): "66*eps0 = 66 * this file's permittivity" is 66x a value that is ALREADY 10*eps0, i.e. eps_b = 660, not 66.
+eps_b_true = 10.0
+
+[landau]
+alpha1 = -0.037116
+alpha11 = -0.20970000000000003
+alpha12 = 0.7974
+alpha111 = 1.294
+alpha112 = -1.9500000000000002
+alpha123 = -2.5009
+alpha1111 = 38.63
+alpha1112 = 25.290000000000003
+alpha1122 = 16.37
+alpha1123 = 13.670000000000002
+
+[gradient]
+G110 = 0.005938560000000002
+G11_G110 = 1.0
+G12_G110 = 0.0
+G44_G110 = 0.5
+G44P_G110 = 0.5
+
+[electrostatics]
+permittivity = 0.08854187
+
+[elastic]
+C11 = 178.0
+C12 = 96.4
+C44 = 122.00000000000001
+
+[electrostriction]
+Q11_phys = 0.1
+Q12_phys = -0.034
+Q44_phys = 0.029

@@ -1,0 +1,23 @@
+[meta]
+role = "substrate_elastic_only"
+retrieved = "2026-09-19"
+calibration_status = "literature_reference_not_sample_calibrated"
+stiffness_unit = "GPa; numerically identical to engine deck stiffness"
+temperature_policy = "Room-temperature reference only; 293.15-303.15 K is an adopted usage window, not a measured validity range. No temperature interpolation."
+model_limits = "Linear elastic stiffness only. No plasticity, yielding, interfacial slip, or automatic electrical boundary conditions. Film and substrate must be assigned separately."
+registry_name = "fused_silica_hpfs_rt"
+material = "Corning HPFS amorphous fused silica (SiO2)"
+symmetry = "isotropic"
+reference_temperature = "25 C"
+source = "Corning HPFS 7979, 7980, 8655 product brochure, Mechanical Properties p.3."
+source_urls = ["https://www.corning.com/content/dam/corning/media/worldwide/csm/documents/HPFS_Product_Brochure_All_Grades_2022_6.pdf"]
+E_GPa = 73.0
+nu = 0.16
+parameter_provenance = "E=73 GPa, nu=0.16 directly tabulated at 25 C; Cij derived from these two independent inputs."
+conversion = "C11=E*(1-nu)/((1+nu)*(1-2*nu)); C12=E*nu/((1+nu)*(1-2*nu)); C44=E/(2*(1+nu))."
+source_caveat = "Tabulated G=31 GPa and K=35.9 GPa are rounded independent reference values; do not simultaneously impose all four moduli. Not crystalline quartz, nor a calibrated thermally-grown or deposited oxide film."
+
+[elastic]
+C11 = 77.73833671399596
+C12 = 14.807302231237326
+C44 = 31.465517241379313

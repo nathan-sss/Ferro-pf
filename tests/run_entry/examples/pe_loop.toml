@@ -1,0 +1,49 @@
+[run]
+name = "bto_pe_298K"
+seed = 1
+
+[material]
+deck = "bto_lcc2005_8th"            # registry name, or a params/*.toml path
+temperature_K = 298.0
+# or inline:  [material.landau] alpha1 = ... (deck units)  /  [material.landau_si] ... (SI)
+
+[geometry]
+engine = "pf2d"                     # "pf2d" | "pf3d" | "film", always stated
+N = [128, 128]
+cell_nm = 1.0
+slab_thickness_nm = 1.0             # Dz, required for Langevin in pf2d (§ 2)
+
+[physics]
+electrostatics = { eps_b = 10.0 }
+elastic = { k0 = "stress_free" }
+noise = { cutoff_nm = 2.0 }         # l_c; default 2.0 at this layer (§ 2 ruling)
+
+[numerics]
+scheme = "sbdf1"
+dt = "verified"                     # or a number
+backend = "numpy"                   # "numpy" | "numba" | "fused"
+threads = 1
+
+[[stage]]
+kind = "anneal"                     # Langevin at material.temperature_K
+start = "random"
+stop = { block_stationary = 1e-4, n_max = 40000 }
+
+[[stage]]
+kind = "pe_loop"
+axis = [1, 0, 0]
+E_max_kV_cm = 200.0
+waveform = "triangle"
+cycles = 2
+steps_per_cycle = 40000
+langevin = true
+record_every = 100
+
+[measure]
+loop = ["Pr", "Ec", "Pmax", "W_rec", "eta"]     # last cycle
+domain_map = { at = ["anneal:end", "pe_loop:E0+", "pe_loop:E0-"] }
+energy_terms = true
+
+[output]
+dir = "auto"                        # reports/runs/<timestamp>_<name>/
+checkpoint_every = 5000

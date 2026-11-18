@@ -1,0 +1,34 @@
+# Example 5: deterministic relaxation of a BaTiO3-type film under biaxial misfit strain on a substrate stack.
+# Illustrative numbers (a thin, small film, a short run); see docs/RUN_INPUT.md section "Worked examples".
+[run]
+name = "film_relax"
+seed = 0
+
+[material]
+deck = "bto_lcc2005_paper"          # film Langevin needs an isotropic gradient; this deck has one (relax does not need it)
+temperature_K = 298.15
+
+[geometry]
+engine = "film"
+N = [16, 16, 9]                     # Nx, Ny, Nz (Nz grid planes through the thickness)
+cell_nm = 0.4                       # in-plane cell; the z spacing is film_thickness_nm / (Nz - 1)
+film_thickness_nm = 3.2
+
+[physics]
+electrostatics = { eps_b = 10.0 }
+elastic = { misfit_strain_pct = -0.5, substrate_layers = 6 }
+
+[numerics]
+scheme = "sbdf2"
+dt = 0.02
+
+[[stage]]
+kind = "relax"
+start = { kind = "random", amplitude = 0.005, kmax_frac = 0.5, seed = 0 }
+stop = { tol = 1e-6, n_max = 6000 }
+
+[measure]
+energy_terms = true
+
+[output]
+dir = "auto"

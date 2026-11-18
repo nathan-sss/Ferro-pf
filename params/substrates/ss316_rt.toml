@@ -1,0 +1,27 @@
+[meta]
+role = "substrate_elastic_only"
+retrieved = "2026-09-19"
+calibration_status = "literature_reference_not_sample_calibrated"
+stiffness_unit = "GPa; numerically identical to engine deck stiffness"
+temperature_policy = "Room-temperature reference only; 293.15-303.15 K is an adopted usage window, not a measured validity range. No temperature interpolation."
+model_limits = "Linear elastic stiffness only. No plasticity, yielding, interfacial slip, or automatic electrical boundary conditions. Film and substrate must be assigned separately."
+registry_name = "ss316_rt"
+material = "AISI 316 stainless steel"
+symmetry = "isotropic"
+material_form = "Polycrystalline engineering reference; isotropy assumes negligible texture."
+reference_temperature = "room temperature"
+E_GPa = 193.0
+nu = 0.3
+source = "Atlas Steels Product Reference Manual, Section 9 p.7, plus Sonelastic stainless-steels table."
+source_urls = ["https://www.atlassteels.com.au/documents/9-Appendices.pdf", "https://www.sonelastic.com/en/fundamentals/tables-of-materials-properties/ferrous-metals.html"]
+parameter_provenance = "E=193 GPa: Atlas grade row and Sonelastic stainless-steels table; nu=0.30: Sonelastic reference table (not a sample measurement). Cij derived from E and nu."
+conversion = "C11=E*(1-nu)/((1+nu)*(1-2*nu)); C12=E*nu/((1+nu)*(1-2*nu)); C44=E/(2*(1+nu))."
+source_caveat = "Sonelastic later repeats 316 under common steels with E=207 GPa; that inconsistent duplicate is excluded. Atlas independently supports E=193 GPa."
+E_alternative_GPa = 200.0
+alternative_source_url = "https://www.alleima.com/contentassets/d9a24351616945c79d55bbe3ffd2ddb9/datasheet-sanmac-316316l-en-v2024-10-08-0820-version-1.pdf/download"
+alternative_note = "Sanmac 316/316L supplier value at 20 C; 193 vs 200 is source/product variation, not a confidence interval."
+
+[elastic]
+C11 = 259.80769230769226
+C12 = 111.34615384615384
+C44 = 74.23076923076923

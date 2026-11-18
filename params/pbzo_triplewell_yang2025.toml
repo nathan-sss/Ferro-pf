@@ -1,0 +1,60 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "materials.from_toml"   # via energy_protocol.build_case; cases/wp20_triplewell_case.load_params reads it through deck_parser.load_params_toml
+source = "Yang, B., Liu, Y., Jiang, R.-J. et al., \"Enhanced energy storage in antiferroelectrics via antipolar frustration,\" Nature 637, 1104-1110 (2025), doi:10.1038/s41586-024-08505-7 -- Supplementary Information (freely hosted regardless of main-text paywall, static-content.springer.com/esm/art%3A10.1038%2Fs41586-024-08505-7/MediaObjects/41586_2024_8505_MOESM1_ESM.pdf), Supplementary Table 1 (\"AFE\" material row) -- the main-model, single-P, enlarged-cell, 6th-order triple-well material (SPEC S26.2/S27), DIRECT TRANSCRIPTION per checkpoint-1 ruling R1 (SPEC S27.1). Coordinator independently spot-checked 12/12 SI Table 1 values against the SI PDF (pdftotext) before authorizing Stage 1 -- see reports/WP20_STAGE0_NOTE.md and SPEC S27.1."
+label = "PbZrO3 line, Yang 2025 main-model (enlarged-cell single-P triple-well), machinery-validation deck"
+provenance_note = "SPEC S27.3(c)/S28.7(R6): RESOLVED via main-text access (reports/LIT_yang2025_main.md S6), replacing the earlier 'shallow-attribution leaf; Mundy 2022 lineage plausible, not claimed' hedge. Two explicit main-text statements: (a) the P,q two-order-parameter CONCEPT cites ref.52 = Haun et al., 'Thermodynamic theory of PbZrO3,' J. Appl. Phys. 65, 3173 (1989) -- concept only, not necessarily Table 1's numbers; (b) 'The values of the coefficients for AFEs are given in Supplementary Information Table 1 (ref. 55)' -- ref.55 = M. J. Haun, PhD thesis, Pennsylvania State Univ. (1988), the unpublished dissertation behind the whole 5-part Ferroelectrics 99 (1989) series (same author/year as ref.52) -- Haun-lineage, specifically the PhD thesis, NOT Mundy 2022. The thesis itself remains inaccessible (ProQuest-gated, no free copy, WP18_STAGE0_NOTE.md). Separately, the main text states the fitting METHOD: 'The Landau coefficients were chosen to fit the pure PbZrO3 P-E loop' (Methods) -- complements, does not replace, the thesis-source citation."
+si_to_deck = "solvers/units.py si_to_deck_landau/si_to_deck_elastic: deck = SI * 1e-9 for Landau alpha_n (any order n, P unscaled) and for elastic C_ij [Pa->GPa-numeric]; Q_ij [m^4/C^2] carries NO SI<->deck conversion (SPEC S9.1(a) precedent, strain dimensionless, P unscaled) -- verbatim SI-printed string kept alongside every converted value below for exact traceability (R1)."
+triple_well_sanity = "R1 one-line check: with u=P^2, spinodal turning points solve 15*alpha111*u^2+6*alpha11*u+alpha1=0 (roots u1<u2, WP20_STAGE0_NOTE.md notation); f(P)=alpha1*P^2+alpha11*P^4+alpha111*P^6 at P=sqrt(u2)=0.359307737 deck is f=+1.7047172e-2 > 0 = f(0) -- PASS, P=0 (AFE) stays below the spinodal-turning-point energy. Separately verified this deck has NO real zero-field stationary point beyond P=0 (roots of f'(P)=0 other than 0 are complex, discriminant=-2.4677<0): at E=0 the landscape is a genuine SINGLE well: the 'triple-well' character is field-induced (E tilts f(P)-E*P and CREATES the FE minima), matching Yang SI Fig.23a's own hedge 'which can become energy wells when the field is applied', not a literal three-simultaneous-minima-at-E=0 picture. Computed via /opt/miniconda3/bin/python3, gates/g21a_fitter_roundtrip.py reproduces this number independently at import time."
+e_thresholds_closed_form = "Closed-form spinodal (dE/dP=0, E(P)=2*alpha1*P+4*alpha11*P^3+6*alpha111*P^5): P1s=sqrt(u1)=0.187876095, P2s=sqrt(u2)=0.359307737 deck; E_F=E(P1s)=6.687335938e-2 deck (66.873 MV/m), E_A=E(P2s)=3.632441340e-2 deck (36.324 MV/m); E_F>E_A>0, correct double-loop ordering. P_max at the chosen loop drive field E_max=0.10 deck (100 MV/m, unique real root past E_F): P_max=0.454636559 deck. These are the reference targets G21b leg A's independent 0D Newton-continuation trace must reproduce to <=0.1% (SPEC S27.1 R4)."
+kappa_b = "R2, provenance corrected SPEC S27.3(b)/S28.7(R6): kappa_b=50 stays REQUIRED/bracketed -- main-text access (reports/LIT_yang2025_main.md S2) did NOT resolve it; K in the main text's own eq.6/9 is defined only symbolically ('background dielectric constant... K'), never given a number. NAME-COLLISION WARNING: the only '~50' permittivity figure anywhere in the main text is a DIFFERENT quantity -- 'For A-N type materials, non-polar components were set with different permittivity... A permittivity of approximately 50 was sufficient...' (p.1108) is the PE-FILLER dial (SI Table 2's eps_r, a free composite-material knob), NOT kappa_b (the uniform background term added in every cell). If this deck's kappa_b=50 was ever read as sourced from that sentence, that citation is WRONG -- correct provenance is 'CONVENTION-INHERITED, UNSOURCED' (SPEC S26.2's recorded working default, no primary-text number exists for it, main or SI). deck permittivity = kappa_b * 0.08854187 (established WP15/WP16 convention, eps0-in-deck-units base constant) = 4.4270935. Bracket [25,100] sensitivity (R2, reported once, not gated) in reports/WP20_REPORT.md; kappa_b does NOT enter the 0D fitter/closure (R2) -- D(k=0)=0 for a homogeneous single-domain state, SPEC S1.3."
+geometry = "SPEC S27.3(a)/S28.7(R6): UPGRADED to SOURCED (main-text access, reports/LIT_yang2025_main.md S3) -- the 'unconfirmed against primary text' hedge is DROPPED for this field. Main-text Methods, verbatim: 'The simulation of the total grid had dimensions of 128Delta x 128Delta x 1Delta in the [100], [010] and [001] directions, where Delta = 1.0 nm was the grid spacing.' Directly and unambiguously confirms 128^2/Delta=1nm (also serves as SPEC S27 R4's 'one 128^2 shot' at Delta=1nm, L=128nm). No dt/time-step/ramp-rate value is given anywhere in the main text (searched explicitly) -- that part of R2's bracket stays open. G21b's default 64^2 (R4) uses the SAME Delta=1nm, L=64nm -- a documented modeling choice (half Yang's own linear box size, not a resolution change), not a literature number; elastic OFF end-to-end (R6)."
+elastic_note = "R6: WP20 runs elastic OFF end-to-end (machinery-validation scope). C11/C12/C44 and Q11/Q12/Q44 below are parked verbatim for the E-series; Yang's own runs presumably include elasticity (Table 1 provides C/Q), their protocol is unknown/unconfirmed (paywalled main text)."
+off_axis_note = "R5: alpha12/alpha112/alpha123 are FROZEN to this deck's own Table-1 values (not fit targets) -- solvers/loopfit.py's scope is the single-axis family {alpha1,alpha11,alpha111} only; off-axis terms are carried through unchanged for the spatial (3-component P) engine, which uses the full cubic-symmetric f_bulk (SPEC S1.1) unmodified."
+gradient_note = "No gradient (G) coefficients appear anywhere in SI Table 1/2 or the rest of the 42pp SI (checked in Stage 0). Borrowed bto_298K.toml's own G110=1.0 ratio set (SPEC S23.5(d) precedent, WP17's identical borrow for its P-sector) -- flagged placeholder, NOT PbZrO3/PZH-validated. REQUIRED refinement if this deck is later used beyond machinery validation."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 500 (legacy label said 50)
+#   the [meta].kappa_b prose above is kept VERBATIM as the historical record, but its
+#   arithmetic is 10x off (V2-02.1): "deck permittivity = kappa_b * 0.08854187 ... = 4.4270935" is kappa_b=50 times a base that is ALREADY 10*eps0, i.e. eps_b = 500, not 50.
+eps_b_true = 500.0
+
+[landau]
+# Supplementary Table 1 ("AFE" row): alpha1 0.2824e9 N.m^2/C^2; alpha11 -1.6980e9, alpha12 2.3145e9 N.m^6/C^4;
+# alpha111 4.1314e9, alpha112 -1.5456e9, alpha123 -0.8443e9 N.m^10/C^6. deck = SI * 1e-9 (si_to_deck_landau).
+alpha1 = 0.2824
+alpha11 = -1.6980
+alpha12 = 2.3145
+alpha111 = 4.1314
+alpha112 = -1.5456
+alpha123 = -0.8443
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[gradient]
+# NOT in Yang SI (gradient_note above) -- bto_298K.toml's own borrowed ratios, flagged placeholder.
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[electrostatics]
+# kappa_b=50 (R2, working default) * 0.08854187 (WP15/WP16 eps0-in-deck-units base constant).
+permittivity = 4.4270935
+
+[elastic]
+# Supplementary Table 1: C11 2.6e11, C12 1.2e11, C44 1.27e10 N/m^2. deck = SI * 1e-9 (si_to_deck_elastic).
+# PARKED for the E-series (R6) -- WP20 runs elastic OFF end-to-end.
+C11 = 260.0
+C12 = 120.0
+C44 = 12.7
+
+[electrostriction]
+# Supplementary Table 1: Q11 6e-2, Q12 -1.5e-2, Q44 9.4e-3 m^4/C^2. NO SI<->deck conversion (si_to_deck law).
+# PARKED for the E-series (R6); Yang's own Q11/Q12/Q44 read directly into the deck's PHYSICAL convention
+# (SPEC S1.4 Q11_phys/Q12_phys/Q44_phys slot) -- magnitude matches known BTO/PZT Q11_phys~0.06-0.09 range,
+# no /4-hack evidence, but this mapping is an assumption (not stated as such in the SI), flagged.
+Q11_phys = 0.06
+Q12_phys = -0.015
+Q44_phys = 0.0094

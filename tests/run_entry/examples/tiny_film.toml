@@ -1,0 +1,30 @@
+# Smallest film case: 20 deterministic relax steps of a misfit film on a substrate stack.
+[run]
+name = "tiny_film"
+seed = 0
+
+[material]
+deck = "bto_lcc2005_paper"
+temperature_K = 298.15
+
+[geometry]
+engine = "film"
+N = [8, 8, 5]
+cell_nm = 0.4
+film_thickness_nm = 1.6
+
+[physics]
+electrostatics = { eps_b = 10.0 }
+elastic = { misfit_strain_pct = -0.5, substrate_layers = 3 }
+
+[numerics]
+scheme = "sbdf2"
+dt = 0.01
+
+[[stage]]
+kind = "relax"
+start = { kind = "random", amplitude = 0.005, kmax_frac = 0.5, seed = 0 }
+stop = { tol = 1e-6, n_max = 20 }
+
+[output]
+dir = "OUT"

@@ -1,0 +1,4 @@
+# Test tooling on top of requirements.txt: pip install -r requirements.txt -r requirements-dev.txt
+# >= 8.1: older pytest runs a module-level setup() as a nose-style fixture
+# (tests/test_cpu_film.py defines a plain helper of that name).
+pytest>=8.1

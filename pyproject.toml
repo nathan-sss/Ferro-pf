@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "FFT-ferro"
+dynamic = ["version", "dependencies", "optional-dependencies"]
+description = "Fourier-spectral ferroelectric phase-field solvers for periodic and thin-film geometries"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[project.urls]
+Repository = "https://github.com/nathan-sss/FFT-ferro"
+
+[tool.setuptools]
+packages = ["fftpf", "solvers", "fftpf._decks"]
+package-dir = {"fftpf._decks" = "params"}
+
+[tool.setuptools.package-data]
+"fftpf._decks" = ["*.toml", "substrates/*.toml", "archive/*.toml", "archive/README.md"]
+
+[tool.setuptools.dynamic]
+version = {attr = "fftpf.ENGINE_VERSION"}
+dependencies = {file = "requirements.txt"}
+optional-dependencies.performance = {file = "requirements-performance.txt"}
+optional-dependencies.test = {file = "requirements-dev.txt"}

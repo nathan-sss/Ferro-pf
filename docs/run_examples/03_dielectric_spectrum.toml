@@ -1,0 +1,74 @@
+# Example 3: dielectric spectrum, lock-in and fluctuation routes, 3 replicas.
+# VERIFICATION MODEL, not a material: a purely quadratic Landau energy (alpha1 = 0.6 deck units, all higher
+# terms 0, no elasticity) is an exact Debye relaxator on the k = 0 mode,
+#   chi_deck(w) = chi0 / (1 - i w tau),  chi0 = 1 / (2 alpha1) = 0.8333,  tau = 1 / (2 alpha1 L) = 0.8333 deck time.
+# See docs/RUN_INPUT.md section "Worked examples".
+[run]
+name = "debye_spectrum"
+seed = 21
+replicas = 3                        # three complete runs, seeds 21, 22, 23, pooled at the end
+
+[material]
+temperature_K = 298.0
+
+[material.landau]                   # deck units
+alpha1 = 0.6
+alpha11 = 0.0
+alpha12 = 0.0
+alpha111 = 0.0
+alpha112 = 0.0
+alpha123 = 0.0
+
+[material.gradient]
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[material.elastic]                  # required with an inline material, unused here (k0 = "off")
+C11 = 275.0
+C12 = 179.0
+C44 = 54.3
+
+[material.electrostriction]
+Q11_phys = 0.11
+Q12_phys = -0.045
+Q44_phys = 0.029
+
+[geometry]
+engine = "pf2d"
+N = [8, 8]
+cell_nm = 4.0
+slab_thickness_nm = 4.0
+
+[physics]
+electrostatics = { eps_b = 10.0 }
+elastic = { k0 = "off" }
+
+[numerics]
+dt = 0.02
+
+[[stage]]
+kind = "anneal"
+start = "zero"
+stop = { n_steps = 500 }
+
+[[stage]]
+kind = "ac"                         # small-signal tones, lock-in read-out
+axis = [1, 0, 0]
+E0_kV_cm = 25.0                     # the model is exactly linear: a large amplitude only improves signal / noise
+omega = [0.3, 1.2, 4.0]             # reduced: rad per deck time
+periods = 6
+discard_periods = 2
+
+[[stage]]
+kind = "fdt"                        # zero-field fluctuation route
+n_steps = 8000
+nperseg = 1024
+
+[measure]
+spectrum = { quantities = ["eps_real", "eps_imag"], routes = ["lockin", "fdt"] }
+
+[output]
+dir = "auto"

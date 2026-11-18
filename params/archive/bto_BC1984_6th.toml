@@ -1,0 +1,39 @@
+[meta]
+registry_name = "bto_bc1984_6th"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Rabe/Ahn/Triscone 2007 App A (Chen), Table 1 'Sixth order' column, PDF p.376/book p.365"
+T = 298.0
+note = "REFERENCE ONLY (SPEC WP4 9.1b) -- not fit to reproduce k_t180.i; mechanics/gradient/permittivity borrowed from bto_298K.toml (same material)"
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+alpha1 = -0.027722
+alpha11 = -0.6475500000000001
+alpha12 = 0.323
+alpha111 = 8.004000000000001
+alpha112 = 4.470000000000001
+alpha123 = 4.9190000000000005
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[gradient]
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[electrostatics]
+permittivity = 0.08854187
+
+[elastic]
+C11 = 275.0
+C12 = 179.0
+C44 = 54.3
+
+[electrostriction]
+Q11_phys = 0.11
+Q12_phys = -0.045
+Q44_phys = 0.029

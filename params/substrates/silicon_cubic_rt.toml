@@ -1,0 +1,20 @@
+[meta]
+role = "substrate_elastic_only"
+retrieved = "2026-09-19"
+calibration_status = "literature_reference_not_sample_calibrated"
+stiffness_unit = "GPa; numerically identical to engine deck stiffness"
+temperature_policy = "Room-temperature reference only; 293.15-303.15 K is an adopted usage window, not a measured validity range. No temperature interpolation."
+model_limits = "Linear elastic stiffness only. No plasticity, yielding, interfacial slip, or automatic electrical boundary conditions. Film and substrate must be assigned separately."
+registry_name = "silicon_cubic_rt"
+material = "Single-crystal silicon"
+symmetry = "cubic"
+reference_temperature = "room-temperature reference; no temperature law adopted"
+orientation = "Cij in crystal axes [100],[010],[001]; direct film use: x=[100], y=[010], z=[001]. Other cuts require tensor rotation."
+source = "Zhang et al., J. Synchrotron Rad. 21 (2014) 507-517, DOI 10.1107/S1600577514004962; supporting information p.2."
+source_urls = ["https://journals.iucr.org/s/issues/2014/03/00/ve5027/ve5027sup1.pdf"]
+parameter_provenance = "C11=165.7, C12=63.9, C44=79.6 GPa directly from published code. Do not replace by a single isotropic Young modulus."
+
+[elastic]
+C11 = 165.7
+C12 = 63.9
+C44 = 79.6

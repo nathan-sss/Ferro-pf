@@ -1,0 +1,65 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = ""   # NO code reader -- R3 derivation archive, not a materials deck (no [landau]/[elastic] sectors)
+purpose = "SPEC WP15 (R3, S21): PMN heterovalent chemical-disorder statistics -- derivation provenance for pmn_field.py's two quenched E_d(r) layers. Not a solver materials file (no [landau]/[elastic] schema) -- documents the literature inputs and default-parameter derived outputs, machine-readably, alongside WP15_REPORT.md's prose."
+generated_by = "pmn_field.py"
+
+[charge_model]
+# SPEC S21.1: Mg2+ (prob 1/3, deviation -2 from +4 B-site average), Nb5+ (prob 2/3, deviation +1).
+mean_dq = 0.0
+var_dq = 2.0
+dq_cor = -0.5
+
+[screening_lambda_s]
+citation = "Westphal, Kleemann & Glinchuk, Phys. Rev. Lett. 68, 847 (1992); Glinchuk & Farhi, J. Phys.: Condens. Matter 8, 6985 (1996)"
+note = "No explicit PMN screening-length NUMBER found in accessible (non-paywalled) sources for either paper; a follow-on computational implementation of this same theory (Wang, Yi & Xu, Int. J. Solids Struct. 2016) treats the random field as a phenomenological fitted input, not a screening-length derivation, confirming no ready number exists. Parameterized as a range per SPEC's own fallback, anchored to PMN's own measured short-range structural scales (COR size 2-3nm; polar-nanoregion correlation length ~1.5-7nm, neutron/X-ray diffuse scattering)."
+range_nm = [1.0, 5.0]
+default_nm = 2.0
+
+[screening_eps_r]
+note = "Background/optical permittivity screening the LOCAL charge-charge interaction -- deliberately NOT the giant low-frequency relaxor permittivity (~20000-30000), which is itself the soft-mode response being modeled (would be circular). No PMN-specific background-only number found (same search difficulty as WP9's kappa_b(PZT), itself flagged genuinely unresolved). Bracketed, not asserted."
+superseded_2026_08_24 = "SPEC S22 (WP16/R4) coordinator ruling 2, on the WP16 pilot's own pre-flight finding: the original (10,50,100)/default-50 bracket is EMPIRICALLY EXCLUDED -- PMN experimentally shows Curie-Weiss behavior above the Burns temperature, so a parameterization with NO reachable Curie-Weiss window at any credible T (eps_r=50's field-saturated regime, confirmed analytically and by direct short Langevin simulation, reports/WP16_PILOT_NOTE.md) is inconsistent with the data itself. Physical anchor: the host crystal's own dielectric response at the relevant screening-T range is O(10^2-10^3), making eps_r~10^3 the defensible scale (below the giant ~20000-30000 soft-mode peak this note's circularity warning still correctly excludes)."
+bracket = [500.0, 1000.0, 2000.0]
+default = 1000.0
+
+[cor_layer]
+citation = "Davies, P.K. & Akbas, M.A., 'Chemical order in PMN-related relaxors: structure, stability, modification, and impact on properties,' J. Phys. Chem. Solids 61 (2000) 159-166 -- read directly, p.160"
+quote = "The microstructures of the as sintered forms (1225C, 1h) of all these ceramics were similar to all PMN-type relaxors and contained ~20 vol% of 2-3 nm 1:1 ordered domains dispersed in a disordered perovskite matrix."
+f_cor_default = 0.20
+xi_cor_default_nm = 2.5
+xi_cor_range_nm = [2.0, 3.0]
+dq_matrix_at_f_cor_default = 0.125
+ruling = "SPEC S21.3 (coordinator, 2026-08-23): RESOLVED. The charge-neutral 'random site' model (this same Davies & Akbas 2000 paper's own conclusion, which the original S21.1 spec text had NOT adopted) is now the DEFAULT -- see [cor_layer_bond_default] below. The original 'space charge' picture is KEPT as a labeled default-off option -- see [cor_layer_legacy_space_charge]. Not silently resolved either way in the original submission; the coordinator's own words: 'the agent was right to surface it.'"
+
+[cor_layer_bond_default]
+model = "bond-type: local Landau T0 shift inside COR regions (pmn_field.bond_field_cor_alpha1), charge-neutral (E_d contribution exactly zero)"
+dT0_cor_bracket_K = [-50.0, 50.0]
+dT0_cor_default_K = 25.0
+note = "Amplitude BRACKETED not derived (SPEC S21.3: 'pending R4 sensitivity') -- charge neutrality removes the charge-statistics lever used elsewhere in this module; sign-agnostic, no PMN-specific literature number found for how much local 1:1 order shifts the local transition tendency."
+rms_alpha1_deck_at_default = 4.705871e-03
+xi_ed_nm_at_default = 2.5
+
+[cor_layer_legacy_space_charge]
+status = "DEFAULT OFF (SPEC S21.3) -- kept unchanged from the original submission, pmn_field.defect_field_cor/derive_ed_stats_cor"
+layer2_std_vector_V_per_m = 1.141447e+09
+layer2_std_component_V_per_m = 6.590148e+08
+layer2_std_component_deck = 6.590148e-01
+layer2_xi_ed_nm = 3.2016
+
+[a_lattice]
+value_nm = 0.4049
+note = "PMN pseudocubic perovskite lattice constant, standard crystallography (same status as pzt_field.A_LATTICE_PZT_NM)."
+
+[pure_pmn_curie_weiss]
+ruling = "SPEC S21.3 ruling 2 (coordinator, 2026-08-23), hybrid option a': alpha1(T) from PMN's OWN measured high-T Curie-Weiss fit, not a PMN-PT extrapolation."
+citation_primary = "Viehland, D., Jang, S.J., Cross, L.E. & Wuttig, M., 'Deviation from Curie-Weiss behavior in relaxor ferroelectrics,' Phys. Rev. B 46, 8003 (1992)"
+citation_crosscheck = "Al-Barakaty, Prosandeev, Wang, Dkhil & Bellaiche, Phys. Rev. B 91, 214117 (2015), quotes C=1.25e5 K/T0=396K for the same high-T fit; a third search-corroborated source gives C=1.27e5 K/T0=400K -- all 3 cluster tightly, used as a range"
+T0_K = 398.0
+T0_range_K = [396.0, 400.0]
+C_CW_K = 1.2e5
+C_CW_range_K = [1.2e5, 1.3e5]
+factor_of_2_note = "SPEC S21.3's relayed formula omitted the factor of 2 this project's OWN already-validated (G6a-gated) Curie-Weiss-to-alpha1 convention includes (literature_params.pzt_haun_x_landau_si: a1=(T-T0)/(2*eps0*C0), standard Landau result a1=1/(2*eps0*chi)). Implemented WITH the factor of 2 for self-consistency with that established convention -- flagged explicitly, not silently chosen; trivial to drop if literal."
+alpha1_deck_at_298K = -4.705871e-02
+alpha11_bracket_deck = [-0.3, 0.3]
+alpha11_bracket_note = "Order-of-magnitude ONLY, anchored to this project's own already-validated PT/BTO/PZT alpha11 (-0.073/-0.210/+0.058 deck at 298K) -- NOT a PMN derivation. alpha111/alpha112/alpha123 left fully unset (too speculative to bracket)."
+zhang2017_retry = "SPEC S21.3: 'try once more via arXiv/author copy' -- retried, still unreachable: no arXiv preprint exists; Penn State PURE institutional-repository page links only the paywalled DOI, no deposited PDF; companion follow-on paper (PRB 97, 054114, 2018, same group) also 403. Bracketed and said so, per SPEC's own instruction for this outcome."

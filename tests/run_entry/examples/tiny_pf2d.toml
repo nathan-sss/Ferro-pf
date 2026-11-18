@@ -1,0 +1,32 @@
+# Smallest pf2d case: a short deterministic anneal on a 16 x 16 grid (used by the CLI test).
+[run]
+name = "tiny_pf2d"
+seed = 3
+
+[material]
+deck = "bto_lcc2005_8th"
+temperature_K = 298.0
+
+[geometry]
+engine = "pf2d"
+N = [16, 16]
+cell_nm = 0.4
+
+[physics]
+elastic = { k0 = "off" }
+
+[numerics]
+dt = 0.02
+threads = 1
+
+[[stage]]
+kind = "anneal"
+langevin = false
+sample_every = 10
+stop = { n_steps = 60 }
+
+[measure]
+energy_terms = true
+
+[output]
+dir = "OUT"

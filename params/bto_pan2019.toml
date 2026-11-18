@@ -1,0 +1,72 @@
+[meta]
+registry_name = "bto_pan2019"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Pan, Yang, Zhang, Han, Chen, Yang, et al., Science 365, 578 (2019), Supplementary Materials p.3-4 (SM eq S1-S7), via reports/LIT_pan2019_science.md (iii), page-verified pSM.3-4 pdftoppm render"
+extracted = "2026-08-28"
+T = 298.0
+note = "SPEC S34.2 (B2-A). BTO end-member of the ternary BiFeO3-BaTiO3-SrTiO3 region-mixture model (dossier iii). alpha1/alpha11/alpha111 are T-DEPENDENT (generator functions solvers.pan2019_field.bto_alpha1_si/bto_alpha11_si/bto_alpha111_si; deck wrapper bto_landau_deck(T)); alpha12/alpha112/alpha123 are T-independent flat numbers per the dossier. [landau] values below are the T=298K snapshot (declared room-T reference, same convention as bfo_pan2019.toml/sto_pan2019.toml). Units: dossier's own SI values x1e-9 (units.si_to_deck_landau). Independent 0D minimization (gates/g26c_endmember_0d.py) confirms tetragonal ground state (single dominant component, other two ~1e-9, magnitude 0.309 deck @ 298K), matching Pan's own BTO->T assignment."
+discrepancy_flag = "RESOLVED (mechanism) by B2-D forensics (reports/LIT_pan2019_forensics.md), pick NOT yet made -- coordinator ruling 2026-08-28 (mid-B2-A): 5 of 6 BTO coefficients match Rabe App A Table 1 'Sixth order [2,3]' (Bell&Cross 1984 lineage) exactly. alpha111 diverges: Pan SM (p.2/PDF p.3, 300dpi-confirmed) prints 'alpha111=-5.52e7(T-393)+2.76e8'. Traced further: ref 45=Sluka et al., Nat Commun 3, 748 (2012) Table 1 (fetched open-access) prints 'alpha111=(393-T)*5.52e7+2.76e9' -- Pan's EXACT (T-393) reference and leading coefficient, but Sluka's own constant is 2.76e9, not Pan's 2.76e8: Pan's SM is a direct copy of Sluka Table 1 that drops one order of magnitude off the constant term (1e9->1e8), a transcription slip unique to Pan (Sluka's own 393-referenced form does not algebraically match Rabe/Bell&Cross's original 120-referenced form either -- unchased). MAIN RUN uses Pan's LITERAL 2.76e8 (reproduction-fidelity priority, same ruling logic as sto_pan2019.toml's alpha1) -> alpha111(298K)=5.52 deck (SI 5.52e9), matching THIS file's own [landau] block below. The Sluka-literal alternative (2.76e9 constant) gives alpha111(298K)=8.004 deck (SI 8.004e9) -- EXACTLY this repo's independent bto_298K.toml value (Ferret-.i-extracted, LCC2005 lineage, gate-certified) -- strong indirect corroboration that 2.76e9 is 'what Pan meant' to run, but that is an inference, not a re-derivation; NOT used for the main deck. gates/g26c_endmember_0d.py carries a zero-compute 0D sensitivity line comparing BOTH candidates' T=298K ground state (P0, R/T/C class) per coordinator instruction: if the eventual domain-structure classification (SPEC S34.2 deliverable 5) comes out wrong, this alpha111 pick is suspect #2 (suspect #1 = elastic OFF, SPEC S34.2's own on-record honest limit)."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 100 (legacy label said 10)
+eps_b_true = 100.0
+
+[landau]
+alpha1 = -0.027722
+alpha11 = -0.64755
+alpha12 = 0.323
+alpha111 = 5.52
+alpha112 = 4.47
+alpha123 = 4.91
+# alpha1111/alpha1112/alpha1122/alpha1123 absent, not zero-filled -- see
+# bfo_pan2019.toml's own [landau] comment for the full R1 rationale
+# (verbatim identical here, SPEC S36.6 params pass).
+
+[gradient]
+# SHARED across all 3 Pan2019 end-members -- see bfo_pan2019.toml's own
+# [gradient] comment for the full provenance note (verbatim identical here).
+G110 = 0.0704
+G11_G110 = 1.2
+G12_G110 = 0.0
+G44_G110 = 0.6
+G44P_G110 = 0.6
+
+[electrostatics]
+# SHARED background permittivity -- see bfo_pan2019.toml's own
+# [electrostatics] comment (verbatim identical here).
+permittivity = 0.8854187
+
+[elastic]
+# SOURCED 2026-08-31 (SPEC S37.3/S37.5, B2-E Stage E1): Sluka, Tagantsev,
+# Bednyakov & Setter, Nat. Commun. 3, 748 (2012) Table 1 (reports/
+# LIT_pan2019_forensics.md's "C/Q mechanical sector" section) -- c11/c12/c44
+# = 2.75/1.79/0.543e11 N/m^2, deck-scaled (numerically GPa: 275.0/179.0/54.3)
+# -- EXACTLY matches this repo's existing params/bto_BC1984_6th.toml [elastic]
+# block (independent cross-check, not re-derived here). Cubic stiffness has
+# no Voigt-vs-tensor ambiguity (see bfo_pan2019.toml's own [elastic]
+# comment) -- consumed as-is.
+c1111 = 275.0
+c1122 = 179.0
+c1212 = 54.3
+
+[electrostriction]
+# SOURCED 2026-08-31 (SPEC S37.3/S37.5 ruling R-c, B2-E Stage E1): Sluka et
+# al. 2012 Table 1 (SAME source as [elastic] above) prints Q11=0.1104,
+# Q12=-0.0452, Q44=0.0578 in ORDINARY VOIGT/engineering-shear-strain
+# notation (eps4=Q44*P2*P3, eps4=2*eps_23 -- the SAME convention this repo's
+# elastic.py/materials.py already use for their own Q11_phys/Q12_phys/
+# Q44_phys, per bto_BC1984_6th.toml; SPEC S37.5 ruling R-c: this pairing,
+# not the legacy decks' Q44=0.029 Rabe-first-candidate mismatch, see
+# solvers/bulk3d.py's B2-E R-c sweep note / reports/B2E_E1_REPORT.md for the
+# legacy-deck disposition). Recorded here VERBATIM (Sluka's own printed
+# numbers, unconverted) -- key names Q11_voigt/Q12_voigt/Q44_voigt name the
+# notation explicitly rather than reusing Q11_phys/Q12_phys/Q44_phys, so a
+# reader never has to guess which convention a bare "Q44" means (SPEC S37.5's
+# named trap). MAPPING into bulk3d.py's internal tensor form (setup_elastic_3d
+# Q=(Q1111,Q1122,Q1212)): Q1111_tensor=Q11_voigt, Q1122_tensor=Q12_voigt
+# (normal-normal slots, NO factor either notation) but Q1212_tensor=
+# Q44_voigt/4=0.01445 (shear-shear slot ONLY -- see solvers/bulk3d.py's
+# eigenstrain_3d docstring for the from-scratch derivation of this factor
+# of 4). This conversion is applied in CODE (gates/g30a-e, never pre-baked
+# into a stored deck number) so the source's own printed digits stay
+# traceable here unmodified.
+Q11_voigt = 0.1104
+Q12_voigt = -0.0452
+Q44_voigt = 0.0578

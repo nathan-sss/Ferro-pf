@@ -1,0 +1,38 @@
+[meta]
+registry_name = "pmn_clean_x0"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Viehland, Jang, Cross & Wuttig, Phys. Rev. B 46, 8003 (1992) (primary; alpha1 only) -- cross-checked Al-Barakaty/Prosandeev/Wang/Dkhil/Bellaiche, PRB 91, 214117 (2015) and a third search-corroborated source; alpha11 order-of-magnitude bracket only (NOT PMN-derived, see pmn_field.ALPHA11_PMN_NOTE) -- Zhang et al. 2017 unreachable after retry (arXiv/institutional-repo/companion-paper, all checked)"
+T = 298.0
+x_pt = 0.0
+note = "SPEC S21.3 ruling 2 (hybrid a'): alpha1 MEASURED (PMN OWN high-T Curie-Weiss fit, T0=398K, C_CW=1.2e5K, factor-of-2 flagged -- see pmn_field.pmn_clean_alpha1 docstring); alpha11 bracket = (-0.3,0.3) deck units (order-of-magnitude only, see pmn_field.ALPHA11_PMN_BRACKET/_NOTE) -- left None here (TOML has no bracket syntax, see pmn_disorder_R3.toml for the numeric bracket); alpha111/112/123 REQUIRED, unset, too speculative to bracket with zero PMN-PT composition-trend data points in hand."
+
+[landau]
+alpha1 = -0.04705871114054246
+# alpha11 = REQUIRED (not given in the source; case must set explicitly)
+# alpha12 = REQUIRED (not given in the source; case must set explicitly)
+# alpha111 = REQUIRED (not given in the source; case must set explicitly)
+# alpha112 = REQUIRED (not given in the source; case must set explicitly)
+# alpha123 = REQUIRED (not given in the source; case must set explicitly)
+# alpha1111 = REQUIRED (not given in the source; case must set explicitly)
+# alpha1112 = REQUIRED (not given in the source; case must set explicitly)
+# alpha1122 = REQUIRED (not given in the source; case must set explicitly)
+# alpha1123 = REQUIRED (not given in the source; case must set explicitly)
+
+[gradient]
+# G110 = REQUIRED (not given in the source; case must set explicitly)
+# G11_G110 = REQUIRED (not given in the source; case must set explicitly)
+# G12_G110 = REQUIRED (not given in the source; case must set explicitly)
+# G44_G110 = REQUIRED (not given in the source; case must set explicitly)
+# G44P_G110 = REQUIRED (not given in the source; case must set explicitly)
+
+[electrostatics]
+# permittivity = REQUIRED (not given in the source; case must set explicitly)
+
+[elastic]
+# C11 = REQUIRED (not given in the source; case must set explicitly)
+# C12 = REQUIRED (not given in the source; case must set explicitly)
+# C44 = REQUIRED (not given in the source; case must set explicitly)
+
+[electrostriction]
+# Q11_phys = REQUIRED (not given in the source; case must set explicitly)
+# Q12_phys = REQUIRED (not given in the source; case must set explicitly)
+# Q44_phys = REQUIRED (not given in the source; case must set explicitly)

@@ -1,0 +1,48 @@
+[run]
+name = "bto_eps_spectrum_420K"
+seed = 7
+replicas = 8                        # ensemble axis; refused for film
+
+[material]
+deck = "params/bto_298K.toml"
+temperature_K = 420.0
+
+[geometry]
+engine = "pf2d"
+N = [64, 64]
+cell_nm = 1.0
+slab_thickness_nm = 1.0
+
+[physics]
+electrostatics = { eps_b = 10.0 }
+noise = { cutoff_nm = 2.0 }
+
+[numerics]
+scheme = "sbdf1"
+dt = "verified"
+
+[[stage]]
+kind = "anneal"
+start = "random"
+stop = { n_steps = 20000 }
+
+[[stage]]
+kind = "ac"                         # small-signal drive, lock-in read-out
+axis = [1, 0, 0]
+E0_kV_cm = 0.5
+omega = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1]   # reduced (1 / deck time)
+periods = 40
+discard_periods = 10
+dc_bias_kV_cm = 0.0
+
+[[stage]]
+kind = "fdt"                        # zero-field fluctuation route, cross-check
+n_steps = 200000
+nperseg = 8192
+
+[measure]
+spectrum = { quantities = ["eps_real", "eps_imag", "tan_delta"], routes = ["lockin", "fdt"] }
+# seconds_per_deck_time = ...      # only then are Hz columns written (D8)
+
+[output]
+dir = "auto"

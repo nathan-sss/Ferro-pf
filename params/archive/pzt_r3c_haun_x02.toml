@@ -1,0 +1,53 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "octa_tilt.load_sto_deck"   # same TOML_SECTIONS schema, path passed by gates/g22c + g22f
+source = "P-sector: Rabe/Ahn/Triscone 2007 App A (Chen) p.367 formula set (literature_params.pzt_haun_x_landau_si), x=0.2 (Ti fraction, 80% Zr), T=298K/25C -- the existing WP9 machinery. theta-sector + P-theta coupling: Haun, Furman, Halemane & Cross, 'Thermodynamic theory of the lead zirconate-titanate solid solution system, part IV: Tilting of the oxygen octahedra,' Ferroelectrics 99, 55-62 (1989), Table II x=0.2 row, via reports/LIT_haun_tilt.md (reading-subagent extraction, coordinator page-render-verified, SPEC S28.7). Quantitative target: Haun, Furman, Jang & Cross, part V: Theoretical calculations, Ferroelectrics 99, 63-86 (1989), Table I (p.84), x=0.2/25C row."
+x_Ti = 0.2
+T_K = 298.0
+label = "PZT Zr-rich R3c, Haun-sourced quantitative tilt (SPEC S28.7 R1-R3, supersedes Stage 1's model-material params/pzt_r3c_g22e_model.toml, which stays on file as its own record)"
+note = "theta is an ANGLE IN DEGREES (Haun's convention, R2) -- a DIFFERENT per-deck convention from params/sto_afd_rabeA.toml's linear-displacement meters (theta is per-deck, not global, S28.5 R2/S28.7 R2 both explicit); units.si_to_deck_theta_angle_deg (identity: degrees already O(1-10), unscaled like P) and plain si_to_deck_landau (no extra length-power factor needed in this convention, contrast si_to_deck_theta_landau's meters-mode). EXACT-in-contraction construction (R1): Haun's own [111]-reduced scalar free energy (pIV eq.1-2, Rotated-[111]-frame single-component form) is ΔG_C = 3*alpha1_C*P3^2 + zeta_C*P3^4 + xi_C*P3^6 + 3*beta1_C*theta3^2 + 3*beta11_C*theta3^4 + 3*phi_C*P3^2*theta3^2, phi_C=(gamma11+2*gamma12+gamma44)_C, BARE-PLUS prefix (Haun's own house convention, opposite Chen's minus-prefix that SPEC S28.5 R2 adopted for the STO deck -- both independently net COOPERATIVE for PZT once each sign is tracked through, reports/LIT_haun_tilt.md S6). SIGN-MAPPING DERIVATION (gates/g22f_pzt_haun_quantitative.py step 0 verifies this by sympy from the GENERAL 3-component menu, not asserted): SPEC/afd.py's general f_Ptheta=-t11*sum(Pi^2*thetai^2)-t12*sum_{i!=j}(Pi^2*thetaj^2)-t44*(P1P2th1th2+P2P3th2th3+P3P1th3th1), under P1=P2=P3=P3, theta1=theta2=theta3=theta3 (the SAME [111]-aligned-cubic-axes ansatz as Haun's own reduction -- Part V's own footnote 'Ps=sqrt(3)*P3' confirms Haun's 'P3' is this per-cubic-axis value, not a further-rotated coordinate), collapses to -3*(t11+2*t12+t44)*P3^2*theta3^2 -- matching Haun's 3*phi_C*P3^2*theta3^2 term requires (t11+2*t12+t44) = -phi_C. b1=beta1_C and (b11+b12)=beta11_C are PINNED by Haun (R1); the INDIVIDUAL b11:b12 split and t11:t12:t44 split are NOT resolvable from Haun (Part IV never isolates gamma11/gamma12/gamma44 individually, LIT_haun_tilt.md S6) -- STO-ratio-BORROWED and FLAGGED (params/sto_afd_rabeA.toml's own first-listed SI values, dimensionless ratios only: b11:b12=0.30341:0.69659 of the beta11_C sum; t11:t12:t44=-0.66923:-0.29038:2.25 x the (t11+2t12+t44) contraction -- STO's own quadratic vs quartic OFF-[111] anisotropy magnitude is a physically unrelated material (SrTiO3 vs PZT), this is a structural placeholder for the SPLIT direction only, not a PZT-native number). Elastic/electrostriction OFF (matches Stage 1 R6); Q44(low-T rhombohedral, PZT 90/10 fit)=0.0433 m^4/C^2 and R44=-1.93e-4 deg^-2 (pIV.58, first sourced rotostriction number this WP) PARKED here for a future strain-coupled lane, NOT wired. Records (S28.7 R5): T_R(x=0.2)=+134.7C (pIV eq.8, this composition's own high-T/low-T rhombohedral boundary -- 298K/25C is 109.7K *below* T_R, inside the tilted/low-T-rhombohedral phase by the source's own boundary, replacing Stage 1's qualitative Goldschmidt-tolerance-factor justification). x=0.6@298K R3c question CLOSED as NO: T_R(0.6) per Haun's own eq.8 formula is a deep unphysical extrapolation (~-814C, outside the fit's validity domain) -- params/pzt_Haun_x0.6.toml is nowhere near the tilted-rhombohedral field, do not treat it as an R3c point in any future WP. x=0.3/0.4 RELIABILITY CAUTION (pV.69-72): Part V's own text flags low-T-rhombohedral P (and by the same Q44/R44-frozen-at-90/10 mechanism, theta) as predicted to grow TOO FAST just below T_R for these higher-Ti rows -- x=0.1/0.2 are the more reliable Table II/Table I rows; not used here (x=0.2) but recorded for any future composition choice. EQ.(5) ERRATUM FLAG (pIV.56-57): the coefficient-pinning equation's middle term prints alpha12_C (quartic) inside an otherwise-all-6th-order sum (15*alpha111_C, alpha123_C terms) -- structural consistency would expect alpha112_C; transcribed/used as printed (this deck does not depend on eq.5's own internal consistency, only on its RESULT beta1_C/beta11_C/phi_C, so the flag is provenance-only, not a correction applied here)."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+alpha1 = -0.07477094328021922
+alpha11 = 0.3129109743650977
+alpha12 = -0.003453865100501001
+alpha111 = 0.4288155185511732
+alpha112 = 1.8142247247169152
+alpha123 = -7.54471737750166
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[landau_theta]
+# b1=beta1_C, (b11+b12)=beta11_C EXACT per Haun Table II x=0.2 (pIV.58); split via STO's own b11:b12 ratio, flagged (see [meta]).
+b1 = 0.0003395
+b11 = 5.079102333931778e-06
+b12 = 1.1660897666068223e-05
+b111 = 0.0
+b112 = 0.0
+b123 = 0.0
+
+[coupling_Ptheta]
+# (t11+2*t12+t44) = -phi_C(x=0.2) EXACT (sign-mapping derivation in [meta], verified by gates/g22f's sympy step 0); split via STO's own t11:t12:t44 ratio, flagged (see [meta]).
+t11 = -0.004301815384615384
+t12 = -0.0018665923076923076
+t44 = 0.014463
+
+[gradient]
+# Same borrow-chain as every other PZT-family deck in this repo (BTO G110=1.0 x PZT x=0.4's own ratios) -- NOT re-validated for x=0.2, NOT theta-related.
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[gradient_theta]
+# REQUIRED placeholder (Haun Part IV/V give no gradient/domain-wall coefficient either) -- same round-default precedent as afe.py's Gq=1.0 and the STO deck's Gtheta=1.0.
+Gtheta = 1.0
+
+[electrostatics]
+# Same BTO borrow as every other deck lacking its own permittivity determination.
+permittivity = 0.08854187

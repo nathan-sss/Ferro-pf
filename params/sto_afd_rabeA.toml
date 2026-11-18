@@ -1,0 +1,76 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "octa_tilt.load_sto_deck"   # this file is that reader's own default path
+source = "Rabe, Ahn & Triscone (eds.), Physics of Ferroelectrics: A Modern Perspective (Springer, 2007), Appendix A (L.-Q. Chen), Table 3 'Landau-Devonshire coefficients for SrTiO3' (book p.367), citing refs [10]-[15] undifferentiated per-row: Pertsev/Tagantsev/Setter PRB 61,R825(2000)+erratum PRB 65,219901(2002); Uwe & Sakudo PRB 13,271(1976); Tagantsev/Courtens/Arzel PRB 64,224107(2001); Slonczewski & Thomas PRB 1,3599(1970); Bell & Ruprecht Phys.Rev. 129,90(1963). Full provenance: reports/WP18_STAGE0_NOTE.md; checkpoint-1 ruling SPEC S28.5 (coordinator spot-checked this table directly against the local PDF)."
+T = 298.0
+label = "SrTiO3, pure-theta + coupled-(P,theta) anchor, dual-sector direct transcription (SPEC S28.5 R2)"
+note = "P-sector alpha1(T) and theta-sector beta1(T) are BOTH T-dependent closed forms (coth-based); this file is the T=298.0K snapshot only -- solvers/octa_tilt.py's sto_afd_landau_si(T)/sto_afd_landau_deck(T) is the generator gates sweep T with (same generator/frozen-snapshot relationship as pbzo_kittel_lum2022.toml vs kittel_afe.py). theta IS a linear oxygen displacement (meters, Chen's own text), NOT an angle; deck theta uses units.si_to_deck_theta[_landau] (SPEC S28.5 R2): theta expressed in the engine's own existing nm length unit (deck_theta=SI_theta/1e-9), landau-type theta-coefficients carry an extra THETA_LEN_SCALE^theta_power factor on top of the usual x1e-9 energy-density rescaling. f_Ptheta uses Chen's PRINTED MINUS-SIGN-PREFIXED convention (supersedes SPEC S28.1's bare '+'): -t11*sum(Pi^2*thetai^2) - t12*sum_{i!=j}(Pi^2*thetaj^2) - t44*(P1P2theta1theta2+P2P3theta2theta3+P3P1theta3theta1); t11,t12 BOTH negative in Table 3 => net POSITIVE (competitive) same-axis/cross-axis quartic cost under this sign convention -- correct STO physics (AFD tilting suppresses the coincident polar instability), matching SPEC S28.5 R2's own finding. BOOK TYPO ON RECORD (S28.5 R2): Table 3 prints 'N.m^-4' on the beta11 row (copy-pasted from the beta1 row above it); dimensional analysis (beta11 multiplies theta^4 in an energy density, and the beta12 row -- same quartic degree -- correctly prints N.m^-6) requires N.m^-6, used here."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+# P-sector, Table 3: alpha1(T)=405e5*[coth(54/T)-coth(54/30)] (S28.5 R3 "first listed value" of 4 stacked literature forms -- the other 3 are range-restricted alternates, bracketed below); alpha11=1.70e9, alpha12=1.37e9 T-independent SI; alpha111/112/123 NOT given by Table 3 (4th-order-only P-sector here), zero-default. SI->deck via units.si_to_deck_landau (x1e-9, P unscaled).
+alpha1 = 0.183165576480387
+alpha11 = 1.7000000000000002
+alpha12 = 1.37
+alpha111 = 0.0
+alpha112 = 0.0
+alpha123 = 0.0
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+# alpha1(T) bracket (S28.5 R3, NOT implemented as extra branches, alternate literature determinations):
+#   263.5e5*[coth(42/T)-0.90476] SI, T<50K
+#   7.37e5*(T-28) SI, T>70K
+#   7.06e5*(T-35.5) SI, T>100K (T=298K falls here too: 7.06e5*262.5=1.85325e8 vs the default form's 1.83166e8 SI -- 1.2% apart, both literature-sourced, not reconciled this WP)
+
+[landau_theta]
+# theta-sector, Table 3: beta1(T)=1.32e29*[coth(145/T)-coth(145/105)] SI (SINGLE unambiguous form, no range restriction printed) -- beta1(105)=0 identically, G22b's CLOSURE-BY-CONSTRUCTION Tc target (SPEC S28.5 R4). beta11,beta12: 4 undifferentiated candidates each (S28.5 R3 default = first): beta11=1.69e50 SI (bracket: 1.58e50,1.20e50,0.996e50), beta12=3.88e50 SI (bracket: 3.78e50,2.88e50,2.73e50). b111/b112/b123 NOT given (4th-order-only theta-sector), zero-default. SI->deck via units.si_to_deck_theta_landau(value, theta_power) with theta_power=2 for b1, 4 for b11/b12.
+b1 = 142.5598825203811
+b11 = 169000.00000000003
+b12 = 388000.0000000002
+b111 = 0.0
+b112 = 0.0
+b123 = 0.0
+
+[coupling_Ptheta]
+# f_Ptheta = -t11*sum(Pi^2*thetai^2) - t12*sum_{i!=j}(Pi^2*thetaj^2) - t44*(P1P2theta1theta2+P2P3theta2theta3+P3P1theta3theta1). Table 3: t11 2 candidates {-1.74e29,-2.10e29} SI (default first), t12 2 candidates {-0.755e29,-0.845e29} SI (default first), t44 SINGLE value 5.85e29 SI. Units confirmed by dimensional analysis (N.C^-2, printed "10^29 C^-2.N"): -t11*P^2*theta^2 is an energy density [N/m^2], P^2*theta^2 is [C^2/m^2] (P in C/m^2, theta in m) => t11 in N/C^2. SI->deck via units.si_to_deck_theta_landau(value, 2) (P contributes no extra factor, unscaled).
+t11 = -174.0
+t12 = -75.5
+t44 = 585.0
+# t11/t12 bracket (S28.5 R3, second candidate): t11=-2.10e29 SI (deck -210.0), t12=-0.845e29 SI (deck -84.5)
+
+[gradient]
+# Borrowed BTO's G110=1.0 (bto_298K.toml, HM2006) as a starting-point placeholder for the P-sector, same precedent as pbzo_kittel_lum2022.toml [gradient] -- SPEC S23.5(d)-style borrow, NOT SrTiO3-validated (Table 3 has no gradient/domain-wall data at all).
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[gradient_theta]
+# Gtheta REQUIRED placeholder: Table 3 has no theta-gradient/domain-wall coefficient (homogeneous Landau-Devonshire table only). Round default Gtheta=1.0 (deck units), same "starting point, flagged unvalidated" precedent as kittel_afe.py's Gq=1.0 for q (pbzo_kittel_lum2022.toml).
+Gtheta = 1.0
+
+[electrostatics]
+# Borrowed BTO's permittivity (bto_298K.toml) for numeric-scale compatibility with the rest of the engine's established deck library -- NOT SrTiO3's own real permittivity (which is anomalously large, ~300 near 298K and diverging further at low T from STO's incipient-ferroelectric character; using that real value here would create a severe scale mismatch against every other deck's depolarization operator). theta does NOT source this field (SPEC S28.1 binding); only P does, and P never orders in real STO anyway (this deck's P-sector is included for dual-sector completeness/G22a's coupling-sign map, not because STO has an accessible P transition).
+permittivity = 0.08854187
+
+[elastic]
+# PARKED verbatim (SPEC S28.5 R6: elastic stays OFF this WP). Table 3 c_ij: 4 undifferentiated candidates each SI, first-listed default, x1e-9 (units.si_to_deck_elastic). Bracket: c11 in {3.181e11,3.36e11,3.48e11}, c12 in {1.025e11,1.027e11,1.07e11}, c44 in {1.215e11,1.236e11,1.27e11} (remaining 3 of 4 each).
+C11 = 315.6
+C12 = 101.0
+C44 = 119.00000000000001
+
+[electrostriction]
+# PARKED with [elastic] (S28.5 R6). Table 3 Q_ij (P-electrostriction): Q11/Q12 have 3 undifferentiated candidates each (first-listed default), Q44 a single value. Dimensionless strain-per-(C/m^2)^2, kept unconverted (units.py convention). Bracket: Q11 in {0.08,0.066}, Q12 in {-0.015,-0.013}.
+Q11_phys = 0.0457
+Q12_phys = -0.0135
+Q44_phys = 0.00957
+
+[eigenstrain_theta]
+# f_eltheta rotostriction, PARKED verbatim (S28.5 R6: not wired into the main science path this WP; built only so G22c/G22d(iii) can exercise it as an isolated wiring check). Table 3 Lambda_ij (linear-quadratic strain-theta coupling): 4 undifferentiated candidates each SI, first-listed default. theta's own length rescaling applies (Lambda*theta^2 is a dimensionless strain, SAME in SI and deck, so Lambda_deck = Lambda_SI * THETA_LEN_SCALE^2, NO energy-density factor -- unlike coupling_Ptheta's t's, which DO carry the energy factor because they sit inside an energy-density term, not a strain expression). Bracket: Lam11_theta in {14.7e18,9.32e18,8.35e18} SI, Lam12_theta in {-7.34e18,-6.4e18,-5.54e18} SI, Lam44_theta in {-9.88e18,-6.93e18,-7.56e18} SI.
+Lam11_theta = 8.700000000000001
+Lam12_theta = -7.800000000000001
+Lam44_theta = -9.200000000000001

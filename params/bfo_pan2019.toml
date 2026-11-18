@@ -1,0 +1,87 @@
+[meta]
+registry_name = "bfo_pan2019"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Pan, Yang, Zhang, Han, Chen, Yang, et al., Science 365, 578 (2019), Supplementary Materials p.3-4 (SM eq S1-S7), via reports/LIT_pan2019_science.md (iii), page-verified pSM.3-4 pdftoppm render"
+extracted = "2026-08-28"
+T = 298.0
+note = "SPEC S34.2 (B2-A). BFO end-member of the ternary BiFeO3-BaTiO3-SrTiO3 region-mixture model (dossier iii: 'mixtures of BTO, STO and BFO regions... each cell wholesale to one fixed end-member identity, not a per-cell blend'). alpha1 is T-DEPENDENT (generator function solvers.pan2019_field.bfo_alpha1_si(T), deck wrapper bfo_landau_deck(T)); the [landau] values below are the T=298K snapshot (declared room-T reference, dossier (vi): 'no numeric simulation T anywhere -- room temperature is the obvious but unstated inference'; NOT a paper-stated number). Units: dossier's own SI values x1e-9 (units.si_to_deck_landau, power-of-P-independent factor). Independent 0D minimization (gates/g26c_endmember_0d.py) confirms rhombohedral ground state (P1=P2=P3, equal magnitude 0.5128 deck @ 298K), matching Pan's own BFO->R assignment; sufficient condition alpha12<2*alpha11 holds by a wide margin (0.1 vs 1.3)."
+provenance_flag = "RESOLVED 2026-08-31 (B2-E Stage E0, reports/LIT_bfo_sources.md; supersedes the B2-D UNRESOLVED flag of 2026-08-28): the true source is Zhang, Li, Wang, Liu, Chen, Chu, Zavaliche & Ramesh, J. Appl. Phys. 101, 114105 (2007), doi:10.1063/1.2743733, p.114105-2 (literature/zhang2007_jap101_bfo_strain.pdf) -- alpha1=4.9(T-1103)x10^5, alpha11=6.5e8, alpha12=1.0e8, digit-for-digit identical to Pan's SM values (pixel-verified by the E0 reading pass AND re-verified firsthand by the coordinator on the rendered page). Zhang's own provenance: their fit of their own 4th-order model to experimental refs 18-21 (Kubel&Schmid 1990 structural / Ruette 2004 / J.Wang UMD thesis 2005 / Y.H.Chu unpublished); 4th-order-only by declared data limitation -- consistent with this deck's alpha111=alpha112=alpha123=0. The Pan citation ERROR stays on the erratum record: Pan SM attributes the BFO block to its refs (44,45), which verifiably contain no BiFeO3 (B2-D forensics); Zhang 2007 is the actual, uncited source. The same Zhang page also supplies the previously-missing mechanical sector -- elastic c1111/c1122/c1212=3.02/1.62/0.68e11 N/m^2 (that sentence is UNCITED 'first-principles', provenance soft spot flagged in LIT_bfo_sources.md) and electrostriction Q1111/Q1122/Q1212=0.032/-0.016/0.01 C^-2 m^4 (tensor notation, NOT Voigt) -- reserved for the E1 elastic-ON deck work order (SPEC 37.3), deliberately NOT wired into this deck here. WIRED 2026-08-31 (SPEC S37.3 Stage E1): see this file's own [elastic]/[electrostriction] blocks below; consumed only by solvers/bulk3d.py's new 3D elastic module (gates/g30a-e), never by the 2D solver.py+elastic.py path."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 100 (legacy label said 10)
+eps_b_true = 100.0
+
+[landau]
+alpha1 = -0.39445
+alpha11 = 0.65
+alpha12 = 0.1
+alpha111 = 0.0
+alpha112 = 0.0
+alpha123 = 0.0
+# alpha1111/alpha1112/alpha1122/alpha1123 absent, not zero-filled (SPEC S36.2
+# R1): the Pan 2019 dossier's model never states an 8th-order term at all --
+# solvers.materials._pan2019_common_flat's own docstring: "landau (6 keys
+# only, no 8th-order zero-fill -- the pan2019 dossier never states an
+# 8th-order term, so it stays genuinely ABSENT, not 0.0)". Removed here
+# (WP25 Phase 2D params pass, SPEC S36.6) to match that formula path exactly
+# -- previously zero-filled, a pre-existing cosmetic R1 violation recorded
+# at the 2A close-out (SPEC S36.6) and deferred to this pass.
+
+[gradient]
+# SHARED across all 3 Pan2019 end-members (dossier iii: gradient is NOT
+# region-dependent) -- same numbers repeated verbatim in bto_pan2019.toml/
+# sto_pan2019.toml, not independently sourced per-material. SOURCED (their
+# own values, dossier iii), first sourced gradient sector in the B/W lanes
+# (SPEC S34.2). G110 SI=7.04e-11 C^-2m^4N -> deck via units.si_to_deck_gradient
+# (NEW conversion, first use in this repo -- see that function's docstring).
+G110 = 0.0704
+G11_G110 = 1.2
+G12_G110 = 0.0
+G44_G110 = 0.6
+G44P_G110 = 0.6
+
+[electrostatics]
+# SHARED background permittivity kappa_b -- UNSOURCED by this paper (dossier
+# (ii): Pan's own f_elec eq S7 has no kappa_b term). Repo-standing fallback
+# 10*eps0 (Wang, Ma, Li, Britson & Chen, Acta Mater 61 (2013) 7591 lineage),
+# same convention as WP9/WP11/WP15-16/W0/nnbm_wang2026.toml.
+permittivity = 0.8854187
+
+[elastic]
+# SOURCED 2026-08-31 (SPEC S37.3/S37.5, B2-E Stage E1): Zhang, Li, Wang, Liu,
+# Chen, Chu, Zavaliche & Ramesh, J. Appl. Phys. 101, 114105 (2007), p.114105-2
+# (pixel-confirmed, reports/LIT_bfo_sources.md), same sentence/citation status
+# as this file's own [landau] block above -- c1111/c1122/c1212=3.02/1.62/
+# 0.68e11 N/m^2, deck-scaled via units.si_to_deck_elastic's *1e-9 (numerically
+# GPa: 302.0/162.0/68.0). Printed "obtained from first-principles
+# calculations" with NO reference number attached (the provenance_flag above
+# and LIT_bfo_sources.md both flag this uncited-first-principles soft spot;
+# unlike the very next sentence -- Landau/Q -- which cites [18-21]). Cubic-
+# symmetry stiffness has NO Voigt-vs-tensor ambiguity (c44=C44 identically,
+# sigma_23=C_2323*eps_23+C_2332*eps_32=2*C44*eps_23=C44*gamma_23, the SAME
+# either notation), so these 3 numbers are consumed as-is, no conversion.
+c1111 = 302.0
+c1122 = 162.0
+c1212 = 68.0
+
+[electrostriction]
+# SOURCED 2026-08-31 (SPEC S37.3/S37.5, B2-E Stage E1): SAME Zhang 2007
+# p.114105-2 sentence/citation as [elastic] above. Zhang's Eq.(2)-(3) prints
+# Qijkl in TRUE TENSOR notation (rank-4, minor symmetry in both index pairs,
+# SAME structure as an elastic compliance tensor) -- Q1212=0.01 populates ALL
+# FOUR cubic-symmetry-equivalent shear slots (Q1212=Q1221=Q2112=Q2121), NOT
+# elastic.py's/this repo's usual Voigt Q44 (a DIFFERENT, more common
+# ferroelectrics-literature convention where the eigenstrain is written
+# eps4=Q44*P2*P3 with eps4 the ENGINEERING/Voigt shear strain 2*eps_23 --
+# THE NAMED TRAP, SPEC S37.5: Q44_voigt = 4*Q1212_tensor, see solvers/
+# bulk3d.py's eigenstrain_3d docstring for the from-scratch derivation).
+# These 3 numbers are Zhang's own tensor-notation values, used VERBATIM
+# (Q1111/Q1122 carry no such factor either way -- only the shear slot does),
+# consumed ONLY by bulk3d.py's setup_elastic_3d(..., Q=(Q1111_tensor,
+# Q1122_tensor, Q1212_tensor)); key names deliberately do NOT reuse this
+# repo's Q11_phys/Q12_phys/Q44_phys convention (that convention IS Voigt --
+# see bto_BC1984_6th.toml/sto_afd_rabeA.toml -- and reusing those names here
+# with tensor-convention VALUES would be exactly the SPEC S37.5 trap, silent
+# and undetectable by grep). "Kept unconverted" SI<->deck (units.py's own
+# documented convention: Q_ij is dimensionless strain per (C/m^2)^2, P is
+# unscaled SI<->deck, so no length/energy-density rescaling applies).
+Q1111_tensor = 0.032
+Q1122_tensor = -0.016
+Q1212_tensor = 0.01

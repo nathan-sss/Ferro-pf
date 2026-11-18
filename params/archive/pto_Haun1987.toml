@@ -1,0 +1,37 @@
+[meta]
+registry_name = "pto_haun1987"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Rabe/Ahn/Triscone 2007 App A (Chen), Table 5, PDF p.378/book p.368"
+T = 298.0
+note = "G110/permittivity are None (PLACEHOLDER REQUIRED, not in App A); G-ratios given are BTO's own values as a starting-point assumption, not PTO-validated. C11/C12/C44 from cubic compliance inversion (units.cubic_compliance_to_stiffness) of Table 5's s11/s12/s44."
+
+[landau]
+alpha1 = -0.17252
+alpha11 = -0.07300000000000001
+alpha12 = 0.75
+alpha111 = 0.26
+alpha112 = 0.61
+alpha123 = -3.7
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[gradient]
+# G110 = REQUIRED (not given in the source; case must set explicitly)
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[electrostatics]
+# permittivity = REQUIRED (not given in the source; case must set explicitly)
+
+[elastic]
+C11 = 174.60317460317464
+C12 = 79.36507936507937
+C44 = 111.11111111111113
+
+[electrostriction]
+Q11_phys = 0.089
+Q12_phys = -0.026
+Q44_phys = 0.0675

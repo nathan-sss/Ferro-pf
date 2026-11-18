@@ -1,0 +1,38 @@
+[meta]
+registry_name = "pzt_haun_x"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Rabe/Ahn/Triscone 2007 App A (Chen), p.367/PDF p.378 formula set + Table 4 compliances, book p.368"
+x = 0.6
+T = 298.0
+note = "Q44 carries the source's own explicit 1/2 prefactor (kept, not symmetrized with Q11/Q12); G110/permittivity None (PLACEHOLDER REQUIRED, not given in App A; G-ratios are BTO's own as a starting point, not PZT-validated)"
+
+[landau]
+alpha1 = -0.08347176426810667
+alpha11 = 0.03614061707582741
+alpha12 = 0.32330783567211857
+alpha111 = 0.1859147215183226
+alpha112 = 0.8502734384250353
+alpha123 = -4.063278828784538
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[gradient]
+# G110 = REQUIRED (not given in the source; case must set explicitly)
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[electrostatics]
+# permittivity = REQUIRED (not given in the source; case must set explicitly)
+
+[elastic]
+C11 = 169.5906432748538
+C12 = 81.87134502923976
+C44 = 47.169811320754725
+
+[electrostriction]
+Q11_phys = 0.08116093333333332
+Q12_phys = -0.029497800000000005
+Q44_phys = 0.03355143333333334

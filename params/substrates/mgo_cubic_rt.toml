@@ -1,0 +1,21 @@
+[meta]
+role = "substrate_elastic_only"
+retrieved = "2026-09-19"
+calibration_status = "literature_reference_not_sample_calibrated"
+stiffness_unit = "GPa; numerically identical to engine deck stiffness"
+temperature_policy = "Room-temperature reference only; 293.15-303.15 K is an adopted usage window, not a measured validity range. No temperature interpolation."
+model_limits = "Linear elastic stiffness only. No plasticity, yielding, interfacial slip, or automatic electrical boundary conditions. Film and substrate must be assigned separately."
+registry_name = "mgo_cubic_rt"
+material = "Single-crystal magnesium oxide (MgO)"
+symmetry = "cubic"
+reference_temperature = "Exact elastic measurement temperature unspecified by supplier; adopted room-temperature reference."
+orientation = "Cij in [100],[010],[001] crystal axes; direct film use x=[100], y=[010], z=[001]. Other cuts require tensor rotation."
+source = "Crystran MgO product data, Elastic Coefficients row."
+source_urls = ["https://www.crystran.com/optical-materials/magnesium-oxide-mgo/"]
+parameter_provenance = "C11=294, C12=93, C44=155 GPa from supplier table; use cubic Cij directly, not isotropic E/nu conversion."
+source_caveat = "Supplier typical values with no stated uncertainty or exact temperature; lower evidence level than a sample-specific measurement."
+
+[elastic]
+C11 = 294.0
+C12 = 93.0
+C44 = 155.0

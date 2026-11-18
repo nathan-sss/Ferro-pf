@@ -1,0 +1,50 @@
+# Example 2: cool from 400 K to 298 K, hold, then one P-E triangle loop; loop measures and domain maps.
+# Illustrative numbers (a short, small run); see docs/RUN_INPUT.md section "Worked examples".
+[run]
+name = "cool_hold_pe"
+seed = 5
+
+[material]
+deck = "bto_lcc2005_8th"            # a registry deck: re-read at every stage temperature
+temperature_K = 400.0
+
+[geometry]
+engine = "pf2d"
+N = [32, 32]
+cell_nm = 1.0
+slab_thickness_nm = 1.0
+
+[physics]
+elastic = { k0 = "stress_free" }
+
+[numerics]
+dt = 0.02
+
+[[stage]]
+kind = "cool"
+rungs = [[400.0, 1500], [350.0, 1500], [298.0, 1500]]   # [T_K, n_steps]; the state is carried
+record_every = 100
+
+[[stage]]
+kind = "hold"
+T_K = 298.0
+n_steps = 1000
+record_every = 100
+
+[[stage]]
+kind = "pe_loop"
+T_K = 298.0
+axis = [1, 0, 0]
+E_max_kV_cm = 500.0
+waveform = "triangle"
+cycles = 2
+steps_per_cycle = 6000
+record_every = 75
+
+[measure]
+loop = ["Pr", "Ec", "Pmax", "W_rec", "eta"]
+phase_fractions = { scheme = "rto" }
+domain_map = { at = ["cool:end", "pe_loop:E0+", "pe_loop:E0-"], kind = ["phase", "direction"] }
+
+[output]
+dir = "auto"

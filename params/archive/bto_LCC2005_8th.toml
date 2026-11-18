@@ -1,0 +1,40 @@
+[meta]
+registry_name = "bto_lcc2005_8th"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Rabe/Ahn/Triscone 2007 App A (Chen), Table 1 'Eight-order' column, PDF p.376/book p.365"
+T = 298.0
+note = "mechanics/gradient/permittivity kept from bto_298K.toml (HM2006), per SPEC WP4 9.1(a); wall energies under this set are NOT literature-anchored -- only monodomain gates (G6b) apply"
+or_transition_note = "G6b O->R sub-check now gates against 202.5 K (tol 2.0 K), this potential's own robust prediction confirmed by two independent scans (SPEC WP5 11.0 arbitration), not the experimental O->R value near 183 K. LCC2005 is not suitable for O-R transition studies. C->T, T->O, and Ps(298K) remain literature-anchored and pass cleanly."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+alpha1 = -0.037116
+alpha11 = -0.20970000000000003
+alpha12 = 0.7974
+alpha111 = 1.294
+alpha112 = -1.9500000000000002
+alpha123 = -2.5009
+alpha1111 = 38.63
+alpha1112 = 25.290000000000003
+alpha1122 = 16.37
+alpha1123 = 13.670000000000002
+
+[gradient]
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[electrostatics]
+permittivity = 0.08854187
+
+[elastic]
+C11 = 275.0
+C12 = 179.0
+C44 = 54.3
+
+[electrostriction]
+Q11_phys = 0.11
+Q12_phys = -0.045
+Q44_phys = 0.029

@@ -1,0 +1,54 @@
+[meta]
+registry_name = ""   # not a materials.list() entry; read by path -- see `reader`
+reader = "octa_tilt.load_sto_deck"   # same TOML_SECTIONS schema, path passed by gates/g22e
+source = "MODEL-MATERIAL COMPOSITE, SPEC S28.5 R5 -- NOT a literature PZT-tilt deck. P-sector: Rabe/Ahn/Triscone 2007 App A (Chen) p.367 formula set (literature_params.pzt_haun_x_landau_si), x=0.2 (Ti fraction; Zr-rich, 80% Zr), T=100K. theta-sector and (t11,t12,t44) coupling: BORROWED verbatim from params/sto_afd_rabeA.toml's SrTiO3 generator at T=50K (solvers.afd.sto_afd_landau_si), i.e. STO's own AFD self-energy magnitude and Table-3 coupling tensor stand in for PZT's real (unreached) Haun Part IV/V tilt physics. Full justification: reports/WP18_REPORT.md."
+x_Ti = 0.2
+T_pzt_K = 100.0
+T_sto_borrow_K = 50.0
+label = "PZT Zr-rich R3c science-exit model, G22e (SPEC S28.3/S28.5 R5)"
+note = "Composition/T justification (S28.5 R5: 'x=0.6@298K is NOT assumed R3c'): x=0.2 (80% Zr) is far below the x=0.4-0.6 range where the Corker 1998 caveat applies at all, and T=100K is 473.7K below this composition's own T0=573.73K (deep in the ordered ferroelectric phase, not near any Curie-type crossover) -- the general tilts-favored-at-low-T/high-Zr physics (Goldschmidt tolerance-factor argument, Rabe App A intro; Corker et al 1998's own 'tilts increase with increasing Zr content and decreasing T') makes R3c the qualitatively expected regime here even without a precisely known R3m/R3c boundary curve; NOT a claim of a validated quantitative boundary. Coupling sign: this file uses STO's NATIVE (unflipped) Table-3 sign -- gates/g22e found this ALREADY yields P-theta coexistence along [111] in the 0D reduced problem (t44's large positive value dominates t11+2t12+t44 after the [111] tensor contraction, flipping the net effective sign cooperative despite t11/t12 alone being competitive), independently agreeing with Kornev et al. PRL 97,157601(2006)'s first-principles finding of cooperative FE-AFD coupling in real PZT R3c -- a cross-validation of the BORROWED sign choice, not a claim that the MAGNITUDE is validated. Haun Part IV/V numerics remain a REQUIRED placeholder (both OA indexes negative, reports/WP18_STAGE0_NOTE.md); this deck's tilt magnitude carries NO quantitative claim -- G22e's conclusion is STRUCTURAL ONLY (P and theta both nonzero along [111]), never a tilt-angle number. Elastic OFF (S28.5 R6)."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 10 (legacy label said 1)
+eps_b_true = 10.0
+
+[landau]
+alpha1 = -0.1284640352580652
+alpha11 = 0.3129109743650977
+alpha12 = -0.003453865100501001
+alpha111 = 0.4288155185511732
+alpha112 = 1.8142247247169152
+alpha123 = -7.54471737750166
+alpha1111 = 0.0
+alpha1112 = 0.0
+alpha1122 = 0.0
+alpha1123 = 0.0
+
+[landau_theta]
+# BORROWED from params/sto_afd_rabeA.toml's generator at T=50K (STO's own well-below-Tc=105K tilted regime, a representative "clearly nonzero" magnitude -- not tied to PZT's own T=100K, which is a SEPARATE choice for the P-sector).
+b1 = -17.000091686902927
+b11 = 169000.00000000003
+b12 = 388000.0000000002
+b111 = 0.0
+b112 = 0.0
+b123 = 0.0
+
+[coupling_Ptheta]
+# BORROWED verbatim, NATIVE STO sign (Table 3 first-listed values, same as params/sto_afd_rabeA.toml).
+t11 = -174.0
+t12 = -75.5
+t44 = 585.0
+
+[gradient]
+# P-sector: BTO's G110=1.0 (bto_298K.toml) x PZT x=0.4's own G-ratios (pzt_Haun_x0.6.toml borrow-chain) -- same precedent as every other PZT-family deck in this repo, NOT re-validated for x=0.2.
+G110 = 1.0
+G11_G110 = 0.51
+G12_G110 = -0.02
+G44_G110 = 0.02
+G44P_G110 = 0.0
+
+[gradient_theta]
+# Same REQUIRED placeholder as params/sto_afd_rabeA.toml (Table 3 has no gradient data).
+Gtheta = 1.0
+
+[electrostatics]
+# Same BTO borrow as every other deck lacking its own permittivity determination (numeric-scale compatibility, not PZT/STO-validated).
+permittivity = 0.08854187

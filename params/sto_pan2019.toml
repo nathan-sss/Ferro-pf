@@ -1,0 +1,64 @@
+[meta]
+registry_name = "sto_pan2019"   # materials.get()/materials.list() entry name; TOML-vs-formula agreement gated by g29b
+source = "Pan, Yang, Zhang, Han, Chen, Yang, et al., Science 365, 578 (2019), Supplementary Materials p.3-4 (SM eq S1-S7), via reports/LIT_pan2019_science.md (iii), page-verified pSM.3-4 pdftoppm render"
+extracted = "2026-08-28"
+T = 298.0
+note = "SPEC S34.2 (B2-A). STO end-member of the ternary BiFeO3-BaTiO3-SrTiO3 region-mixture model (dossier iii). alpha1 is T-DEPENDENT (generator function solvers.pan2019_field.sto_alpha1_si(T); deck wrapper sto_landau_deck(T)); the [landau] values below are the T=298K snapshot (declared room-T reference, same convention as bfo_pan2019.toml/bto_pan2019.toml). Units: dossier's own SI values x1e-9 (units.si_to_deck_landau). Independent 0D minimization (gates/g26c_endmember_0d.py) confirms paraelectric ground state (all 3 components ~1e-11..1e-12 deck, i.e. P=0 to numerical precision @ 298K), matching Pan's own STO->paraelectric assignment (alpha1>0 with alpha11>0 and all higher terms zero -- an ordinary convex quartic well at P=0, no independent minimization subtlety)."
+stoAlpha1_flag = "SETTLED by B2-D forensics (reports/LIT_pan2019_forensics.md, both sides 300dpi pdftoppm-rendered, not OCR): Rabe App A Table 3 (book p.367/PDF p.378) prints '7.06(T-35.5)'; Pan SM (p.3/PDF p.4) prints 'alpha1=7.06e5(T-36.5)', cited inline to ref (44)=Rabe -- a GENUINE +-1.0K discrepancy in Pan's own transcription of its own cited source (confirmed on both renders, not a rendering artifact); this repo's OWN params/sto_afd_rabeA.toml already carries the Rabe-faithful 35.5 verbatim (coordinator spot-check, SPEC S28.5 R3), so THAT deck is correct relative to Rabe -- Pan's own paper is the outlier. COORDINATOR RULING (2026-08-28, mid-B2-A): main run uses Pan's LITERAL 36.5 (reproduction-fidelity priority -- this deck reproduces what Pan claims to have simulated, not what their cited source actually says); at T=298K the 1K difference changes alpha1 by ~0.4% relative -- not significant, does not move the paraelectric verdict either way."
+# V2-02.1: deck permittivity unchanged; under the engine's unit system this is eps_b = 100 (legacy label said 10)
+eps_b_true = 100.0
+
+[landau]
+alpha1 = 0.184619
+alpha11 = 1.7
+alpha12 = 1.37
+alpha111 = 0.0
+alpha112 = 0.0
+alpha123 = 0.0
+# alpha1111/alpha1112/alpha1122/alpha1123 absent, not zero-filled -- see
+# bfo_pan2019.toml's own [landau] comment for the full R1 rationale
+# (verbatim identical here, SPEC S36.6 params pass).
+
+[gradient]
+# SHARED across all 3 Pan2019 end-members -- see bfo_pan2019.toml's own
+# [gradient] comment for the full provenance note (verbatim identical here).
+G110 = 0.0704
+G11_G110 = 1.2
+G12_G110 = 0.0
+G44_G110 = 0.6
+G44P_G110 = 0.6
+
+[electrostatics]
+# SHARED background permittivity -- see bfo_pan2019.toml's own
+# [electrostatics] comment (verbatim identical here).
+permittivity = 0.8854187
+
+[elastic]
+# SOURCED 2026-08-31 (SPEC S37.3/S37.5, B2-E Stage E1): copied VERBATIM from
+# params/sto_afd_rabeA.toml's own [elastic] block (Rabe, Ahn & Triscone
+# (eds.), Physics of Ferroelectrics (Springer, 2007) Appendix A (L.-Q. Chen)
+# Table 3, book p.367/PDF p.378, first-listed candidate of 4 undifferentiated
+# per reports/LIT_pan2019_forensics.md's "C/Q mechanical sector" section) --
+# c11/c12/c44=3.156/1.01/1.19e11 N/m^2, deck-scaled (numerically GPa:
+# 315.6/101.0/119.0). No independent re-derivation here -- see that file's
+# own [elastic] comment for the full bracket of undifferentiated candidates.
+c1111 = 315.6
+c1122 = 101.0
+c1212 = 119.0
+
+[electrostriction]
+# SOURCED 2026-08-31 (SPEC S37.3/S37.5, B2-E Stage E1): copied VERBATIM from
+# params/sto_afd_rabeA.toml's own [electrostriction] block (SAME Rabe App A
+# Table 3 source as [elastic] above) -- Q11/Q12/Q44=0.0457/-0.0135/0.00957,
+# ORDINARY VOIGT/engineering-shear-strain notation (SAME convention as
+# bto_pan2019.toml's own [electrostriction] comment explains in full; see
+# that comment for the general Voigt-vs-tensor discussion, not repeated
+# here). Key names Q11_voigt/Q12_voigt/Q44_voigt (not Q11_phys/Q12_phys/
+# Q44_phys) name the notation explicitly, SAME reasoning as bto_pan2019.toml.
+# MAPPING into bulk3d.py's internal tensor form: Q1111_tensor=Q11_voigt=
+# 0.0457, Q1122_tensor=Q12_voigt=-0.0135 (no factor), Q1212_tensor=
+# Q44_voigt/4=0.0023925 (shear-shear slot only) -- applied in CODE
+# (gates/g30a-e), never pre-baked into a stored deck number.
+Q11_voigt = 0.0457
+Q12_voigt = -0.0135
+Q44_voigt = 0.00957

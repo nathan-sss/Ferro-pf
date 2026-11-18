@@ -1,0 +1,25 @@
+# Smallest pf3d case: Langevin anneal with elasticity on an 8^3 grid (fixed dt, no cutoff default 2 nm).
+[run]
+name = "tiny_pf3d"
+seed = 1
+
+[material]
+deck = "bto_lcc2005_8th"
+temperature_K = 298.0
+
+[geometry]
+engine = "pf3d"
+N = [8, 8, 8]
+cell_nm = 1.0
+
+[numerics]
+dt = 0.05
+
+[[stage]]
+kind = "anneal"
+start = { kind = "random", amplitude = 0.005, kmax_frac = 0.5 }
+sample_every = 10
+stop = { n_steps = 40 }
+
+[output]
+dir = "OUT"
