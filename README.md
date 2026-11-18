@@ -1,4 +1,4 @@
-# FFT-ferro v1.0
+# FFT-ferro
 
 <font color="green" size="3">
 The whole enigine is built upon the work of Prof. Long-qing Chen from Pennsylvania State University
