@@ -1,5 +1,12 @@
 # FFT-ferro v1.0
 
+<font color="green" size="3">
+The whole enigine is built upon the work of Prof. Long-qing Chen from Pennsylvania State University
+The paper that has significant instruction for the engine is "Applications of semi-implicit Fourier-spectral method to phase field equations. Computer Physics Communications 108 (2-3), 147-158" and "Phase-field models for microstructure evolution. Annual review of materials research 32 (1), 113-140"
+
+The engine is only working for PC and not very capable of multicore work. If you are wish to have big project and big calculation case, please find the another software called MuPro, which is developed by Prof. Long-qing Chen.
+</font>
+
 FFT-ferro evolves a three-component polarization field using semi-implicit ferroelectric phase-field solvers. Choose a periodic plane (`pf2d`), a periodic bulk cell (`pf3d`), or a film with in-plane periodicity and a finite-difference thickness direction (`film`). The Python package is `fftpf`.
 
 ## Install and run
