@@ -69,7 +69,7 @@ No public function.
 | `total_energy_pq_3d` | `(P, q, alpha_P, alpha_q, coupling, ops, grid, Gq, E_ext=(0.0, 0.0, 0.0), elastic_params=None, Lam=None)` | total_energy_pq's 3D mirror: same (densities, totals) contract and the ... |
 | `build_q_factors_film` | `(grid, Gq, dt, Lq)` | M_q = I + dt*Lq*[q's gradient-force operator], factorized once per ... |
 | `grad_force_q_film` | `(q, grid, Gq)` | delta F_gradq/delta q_i in film geometry, applied EXPLICITLY (matrix ... |
-| `grad_energy_q_film` | `(q, grid, Gq)` | TOTAL F_gradq (not a density) in film geometry, mirroring ... |
+| `grad_energy_q_film` | `(q, grid, Gq)` | Total film gradient energy for q, using the same operator as its force. |
 | `with_q_eigenstrain_film` | `(base_el, q, Lam)` | Shallow-copy film_elastic.setup_film_elastic's output with q's ... |
 | `step_pq_film` | `(P, q, alpha_P, alpha_q, coupling, grid, grad_factors, poisson_factors, dt, L, E_ext=(0.0, 0.0, 0.0), q_factors=None, Lq=None, base_el=None, Lam=None)` | One semi-implicit step for (P,q) together in film geometry -- ... |
 | `total_energy_pq_film` | `(P, q, alpha_P, alpha_q, coupling, grid, kappa_b, G11, Gq, poisson_factors=None, E_ext=(0.0, 0.0, 0.0), el=None, Lam=None)` | (densities, totals) in film geometry, keys as total_energy_pq. |
@@ -556,7 +556,7 @@ No public function.
 | `total_energy_ptheta_3d` | `(P, theta, alpha_P, alpha_theta, coupling, ops, grid, Gtheta, E_ext=(0.0, 0.0, 0.0), elastic_params=None, Lam_theta=None)` | total_energy_ptheta's 3D mirror: same (densities, totals) contract and ... |
 | `build_theta_factors_film` | `(grid, Gtheta, dt, Ltheta)` | M_theta = I + dt*Ltheta*[theta's gradient-force operator], factorized ... |
 | `grad_force_theta_film` | `(theta, grid, Gtheta)` | delta F_gradtheta/delta theta_i in film geometry, applied EXPLICITLY ... |
-| `grad_energy_theta_film` | `(theta, grid, Gtheta)` | TOTAL F_gradtheta (not a density) in film geometry, mirroring ... |
+| `grad_energy_theta_film` | `(theta, grid, Gtheta)` | Total film gradient energy for theta, using the same operator as its force. |
 | `with_theta_eigenstrain_film` | `(base_el, theta, Lam_theta)` | Shallow-copy film_elastic.setup_film_elastic's output with theta's ... |
 | `step_ptheta_film` | `(P, theta, alpha_P, alpha_theta, coupling, grid, grad_factors, poisson_factors, dt, L, E_ext=(0.0, 0.0, 0.0), theta_factors=None, Ltheta=None, base_el=None, Lam_theta=None)` | One semi-implicit step for (P,theta) together in film geometry -- ... |
 | `total_energy_ptheta_film` | `(P, theta, alpha_P, alpha_theta, coupling, grid, kappa_b, G11, Gtheta, poisson_factors=None, E_ext=(0.0, 0.0, 0.0), el=None, Lam_theta=None)` | (densities, totals) in film geometry, keys as total_energy_ptheta. |

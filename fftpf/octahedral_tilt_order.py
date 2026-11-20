@@ -747,23 +747,8 @@ def grad_force_theta_film(theta, grid, Gtheta):
 
 
 def grad_energy_theta_film(theta, grid, Gtheta):
-    """TOTAL F_gradtheta (not a density) in film geometry, mirroring
-    film3d.total_energy_3d's own F_grad block with Gtheta: in-plane spectral
-    derivatives integrated with the trapezoidal qw(z), plus the FACE-based
-    z total (G/(2*hz))*sum_faces (t_{j+1}-t_j)^2 -- the exact discrete
-    functional grad_force_theta_film/build_theta_factors_film are the
-    gradient of."""
-    area = grid["Lx"] * grid["Ly"]
-    qw, hz = grid["qw"], grid["hz"]
-    Ny, Nx = grid["Ny"], grid["Nx"]
-    tk = film3d._rfft2(theta)
-    dtdx = film3d._irfft2(1j * grid["KXr"][None, None, :, :] * tk, (Ny, Nx))
-    dtdy = film3d._irfft2(1j * grid["KYr"][None, None, :, :] * tk, (Ny, Nx))
-    fg_inplane = 0.5 * Gtheta * (dtdx**2 + dtdy**2).sum(axis=0)     # (Nz,Ny,Nx)
-    F_inplane = area * float(np.sum(qw * fg_inplane.mean(axis=(-2, -1))))
-    dtz = theta[:, 1:] - theta[:, :-1]
-    F_z = (Gtheta * area / (2 * hz)) * float(np.sum((dtz**2).mean(axis=(-2, -1))))
-    return F_inplane + F_z
+    """Total film gradient energy for theta, using the same operator as its force."""
+    return film3d.grad_energy_3d(theta, grid, Gtheta)
 
 
 def with_theta_eigenstrain_film(base_el, theta, Lam_theta):

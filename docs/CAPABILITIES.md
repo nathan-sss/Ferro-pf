@@ -186,7 +186,6 @@ Each line names **the WP where it lands**, or "not planned" with the reason. Sch
 | Not available | Lands in |
 |---|---|
 | Polycrystal **elasticity** (per-grain rotated C/Q, eigenstrains), 3D polycrystals, and a gated/validated 2D status. The 2D geometry itself — periodic Voronoi grains, a grain-boundary shell label and per-grain rotated Landau force — merged 2026-09-22/23 (`solvers/polycrystal.py`) and is **unverified (no core-gate item)**: exercised only by `cases/cloud_cai2021_vortex_relax.py` / `cases/cloud_cai2021_figures.py` (elasticity off) | **V2-05** |
-| Film AFE/AFD gradient energy exact on **even** in-plane grids: `kittel_afe.grad_energy_q_film` / `octa_tilt.grad_energy_theta_film` still drop the Nyquist mode there (FD relerr 1.40; odd grids exact, 3.5e-10); production uses odd in-plane grids | **film lane carry-over** (SPEC § 8.2.1(b)) |
 | Free charge / semiconductor screening (Poisson–Boltzmann, λ_s linear screening), **finite** electrode screening | **V2-06** (today there are only ideal short-circuit electrodes) |
 | Defect dipoles, ageing, imprint (E_bias(r), τ_age) | **V2-07** |
 | Rhombohedral 3D poling with a **validated** PMN-PT deck | **V2-09** (the deck itself waits on V2-11) |
@@ -268,7 +267,7 @@ fully runnable on disk; it is the sole acceptance instrument. The archive tier (
 
 These are **exceptions of record**, not a to-do list. Each carries its ruling.
 
-### 6.1 Even-grid Nyquist convention, and the film q/θ carry-over
+### 6.1 Nyquist convention and film gradient energy verification
 
 **2D `solver` / `bulk3d` (V2-SYNC, D18, SPEC § 8.2).** The gradient energy density of P, the AFE `q`
 sector (`kittel_afe`) and the AFD `θ` sector (`octa_tilt`), and the homogeneous elastic Green operator,
@@ -283,12 +282,10 @@ C(r) elastic SPM force is an exact energy gradient on **both** even and odd in-p
 `K1.fd_film_elastic_spm`). The former even-grid residual (`1e-4..1e-2` on the `kx = Nyquist` column, ruled a
 documented limitation in SPEC V2-03.C.1(f)) no longer applies to this term.
 
-**New finding — film q/θ gradient energy, even in-plane grids (film lane carry-over).** Unlike the P
-sector above, `kittel_afe.grad_energy_q_film` and `octa_tilt.grad_energy_theta_film` still drop the
-Nyquist mode on **even** in-plane grids: FD relative error **1.40** (odd grids exact, `3.5e-10`).
-`K1.fd_film_afe` / `K1.fd_film_afd` PASS only because their fields are band-limited — they do not
-exercise this limitation. Until fixed, film AFE/AFD production decks use **odd** in-plane grids,
-mirroring the elastic-SPM rule above (SPEC § 8.2.1(b)).
+**Film q and θ gradient energy tests passed.** Both fields use the polarization solver's
+discrete quadratic form. All eight cases in `test_film_q_theta_energy_matches_force`
+passed the finite-difference check against the corresponding force on 8×8, 8×7, 7×8
+and 7×7 in-plane grids.
 
 A V1-era boundary of the same kind — `solver.py`'s off-diagonal k-operators inexact at the
 self-conjugate Nyquist column/row — is **resolved** by the masking above (V2-SYNC); the film solvers

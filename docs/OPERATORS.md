@@ -63,7 +63,8 @@ to:
 Nyquist bin, so odd grids never depend on the rule. On the energy side,
 `add_nyquist_correction` restores the alternating mode that a collocation density built
 from masked derivatives drops. With it, the grid mean equals the quadratic form whose
-gradient is the k² force.
+gradient is the k² force. In films, the q and θ gradient energies use the same
+in-plane quadratic form and thickness-direction face differences as the polarization.
 
 **Shear convention.** Stiffness is always the cubic Voigt triple. It is expanded with
 C_1212 = C44, so σ12 = 2·C44·e12 on the tensor strain. The Green operator takes the full
@@ -92,13 +93,6 @@ carries S is kept. Any other shape is refused. The film has no ensemble axis, an
 - **The real-space random-field generators** (`disorder`, `composite`, `quenched_fields`,
   `random_smooth_field*`). These are setup-time IC tools on the full spectrum, and they
   deliberately import no engine.
-- **The film q/θ in-plane energy** (`kittel_afe.grad_energy_q_film`,
-  `octa_tilt.grad_energy_theta_film`) still squares *raw* i·k derivatives. That is SPEC
-  standing finding 3. It was left bit-identical here and is pinned by a strict xfail in
-  `tests/test_operators.py`. Routing it through the masked derivatives does *not* fix it
-  (FD relerr 0.31 → 0.39 on 8×8). The fix is `return film3d.grad_energy_3d(field, grid, G)`:
-  the quadratic form whose exact gradient is the force these functions already delegate
-  to. It gives FD relerr 5e-10 on even grids and changes odd grids by ≤ 2.3e-16 relative.
 
 ## Adding a symbol
 

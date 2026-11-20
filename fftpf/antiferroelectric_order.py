@@ -692,22 +692,8 @@ def grad_force_q_film(q, grid, Gq):
 
 
 def grad_energy_q_film(q, grid, Gq):
-    """TOTAL F_gradq (not a density) in film geometry, mirroring
-    film3d.total_energy_3d's own F_grad block with Gq: in-plane spectral
-    derivatives integrated with the trapezoidal qw(z), plus the FACE-based
-    z total (G/(2*hz))*sum_faces (q_{j+1}-q_j)^2 -- the exact discrete
-    functional grad_force_q_film/build_q_factors_film are the gradient of."""
-    area = grid["Lx"] * grid["Ly"]
-    qw, hz = grid["qw"], grid["hz"]
-    Ny, Nx = grid["Ny"], grid["Nx"]
-    qk = film3d._rfft2(q)
-    dqdx = film3d._irfft2(1j * grid["KXr"][None, None, :, :] * qk, (Ny, Nx))
-    dqdy = film3d._irfft2(1j * grid["KYr"][None, None, :, :] * qk, (Ny, Nx))
-    fg_inplane = 0.5 * Gq * (dqdx**2 + dqdy**2).sum(axis=0)     # (Nz,Ny,Nx)
-    F_inplane = area * float(np.sum(qw * fg_inplane.mean(axis=(-2, -1))))
-    dqz = q[:, 1:] - q[:, :-1]
-    F_z = (Gq * area / (2 * hz)) * float(np.sum((dqz**2).mean(axis=(-2, -1))))
-    return F_inplane + F_z
+    """Total film gradient energy for q, using the same operator as its force."""
+    return film3d.grad_energy_3d(q, grid, Gq)
 
 
 def with_q_eigenstrain_film(base_el, q, Lam):

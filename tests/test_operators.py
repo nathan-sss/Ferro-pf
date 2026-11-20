@@ -12,8 +12,7 @@
     names are the shared functions themselves, and every engine builder
     returns the very objects the shared functions produced (spies, not source
     greps) -- a solver that re-implements a symbol fails here;
-  * SPEC standing finding 3 (film q/theta energy on even in-plane grids),
-    pinned as a strict xfail so whoever fixes it is told to flip it.
+  * film q/theta gradient energy and force consistency across grid parities.
 """
 import itertools
 import os
@@ -423,20 +422,15 @@ def test_engine_normalisers_and_film_symbols_are_shared(spy):
 
 
 # ===========================================================================
-# 5. SPEC standing finding 3 (open, film lane) -- pinned, NOT fixed here
+# 5. Film q/theta gradient energy and force
 # ===========================================================================
-@pytest.mark.xfail(strict=True, reason=(
-    "SPEC standing finding 3: kittel_afe.grad_energy_q_film / octa_tilt."
-    "grad_energy_theta_film square RAW i*k derivatives, so they drop the Nyquist "
-    "mode on even in-plane grids while their force (film3d.grad_force_3d) keeps "
-    "k^2. Masked derivatives do not fix it; the fix is to return "
-    "film3d.grad_energy_3d(field, grid, G). When fixed, delete this marker."))
+@pytest.mark.parametrize('nx,ny', [(8, 8), (8, 7), (7, 8), (7, 7)])
 @pytest.mark.parametrize('energy,force', [
     (kittel_afe.grad_energy_q_film, kittel_afe.grad_force_q_film),
     (octa_tilt.grad_energy_theta_film, octa_tilt.grad_force_theta_film)])
-def test_film_q_theta_energy_matches_force_on_even_grid(energy, force):
-    g = gridf(8, 8)
-    q = np.random.default_rng(0).normal(size=(3, 5, 8, 8))
+def test_film_q_theta_energy_matches_force(energy, force, nx, ny):
+    g = gridf(nx, ny)
+    q = np.random.default_rng(0).normal(size=(3, 5, ny, nx))
     d = np.random.default_rng(1).normal(size=q.shape)
     eps = 1e-6
     num = (energy(q + eps * d, g, .07) - energy(q - eps * d, g, .07)) / (2 * eps)
